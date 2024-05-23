@@ -4,5 +4,4 @@ h2~=4.1.0
 sphinx~=4.4.0
 sphinx-autodoc-typehints~=1.17.0
 Cython~=3.0.3
-setuptools~=68.2.2
 pyinstaller~=6.2.0

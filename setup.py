@@ -14,10 +14,5 @@ extensions = cythonize([
 ], compiler_directives=cython_directives)
 
 setup(
-    name='jaba-is-you',
-    version='0.16.0',
-    ext_modules=extensions,
-    zip_safe=False,
-    include_package_data=True,
-    packages=find_packages(),
+    ext_modules=extensions
 )

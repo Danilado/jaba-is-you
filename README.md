@@ -21,9 +21,8 @@
 ## Запуск с исходников
 Для запуска игры с исходников необходимо:
 1. Скачать исходный код
-2. pip install -r requirements.txt
-3. pip install -v -e .
-4. python main.py
+2. pip install .
+3. python main.py
 
 ### Профилирование
 1. Поставить FPS в 200+ в `settings.py`

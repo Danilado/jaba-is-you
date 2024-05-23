@@ -19,10 +19,9 @@ def main():
     if args.debug:
         settings.DEBUG = True
         print("Debug on")
-        print("Какой дебаг? Багов не бывает.")
     if args.map:
         settings.FREEMAP = True
-        print("Вся карта открыта, но вы туда не ходите. Там опасно.")
+        print("Map opened")
 
     sound_manager.start_download()
     GameContext(ProgressBarMenu).run()

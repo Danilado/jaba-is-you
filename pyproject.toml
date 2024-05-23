@@ -1,0 +1,32 @@
+[build-system]
+requires = ['setuptools ~= 70.0.0', 'cython ~= 3.0.3']
+build-backend = 'setuptools.build_meta'
+
+[project]
+dynamic = ['dependencies', 'readme']
+name = 'jaba-is-you'
+version = '0.16.0'
+requires-python = '>=3.8'
+authors = [
+  {name = 'epsinenta'},
+  {name = 'quswadress', email = 'quswadress@gmail.com'},
+  {name = 'Punmak'},
+]
+maintainers = [
+  {name = 'Danilado'}
+]
+license = {file = 'LICENSE'}
+
+[project.urls]
+Homepage = 'https://jaba-is-you.pages.dev/'
+Repository = 'https://github.com/Danilado/jaba-is-you.git'
+'Bug Tracker' = 'https://github.com/Danilado/jaba-is-you/issues'
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+packages = ['classes', 'elements']
+
+[tool.setuptools.dynamic]
+readme = {file = 'README.md', content-type = 'text/x-markdown'}
+dependencies = {file = 'requirements.txt'}
