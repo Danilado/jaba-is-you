@@ -11,32 +11,31 @@ if TYPE_CHECKING:
 
 class Button:
     """
-    Класс кнопки
+    Button class
 
-    :ivar x: Абсцисса положения
-    :ivar y: Ордината положения
-    :ivar width: Ширина в пикселях
-    :ivar height: Высота в пикселях
-    :ivar outline: Цвет контура
-    :ivar settings: Настройка цветов
-    :ivar text: Текст
-    :ivar action: Функция вызывающаяся при нажатии
+    :ivar x: Position abscissa in pixels
+    :ivar y: Position ordinate in pixels
+    :ivar width: Width in pixels
+    :ivar height: Height in pixels
+    :ivar outline: Outline colour
+    :ivar button_settings: Colour settings
+    :ivar text: Button text
+    :ivar action: Function called when pressed
     """
 
     def __init__(self, x: int, y: int, width: int, height: int, outline: "COLOR",
                  button_settings: "AbstractButtonSettings",
                  text: str = "", action: Optional[Callable[[], Any]] = None):
-        """
-        Инициализация кнопки
+        """Button initialisation
 
-        :param x: Абсцисса положения
-        :param y: Ордината положения
-        :param width: Ширина в пикселях
-        :param height: Высота в пикселях
-        :param outline: Цвет контура
-        :param button_settings: Настройка цветов
-        :param text: Текст
-        :param action: Функция вызывающаяся при нажатии
+        :param x: Position abscissa in pixels
+        :param y: Position ordinate in pixels
+        :param width: Width in pixels
+        :param height: Height in pixels
+        :param outline: Outline colour
+        :param button_settings: Colour settings
+        :param text: Button text
+        :param action: Function called when pressed
         """
         self.x = x
         self.y = y
@@ -50,9 +49,9 @@ class Button:
 
     def draw(self, screen: "SURFACE"):
         """
-        Метод отрисовки кнопки
+        Button rendering method
 
-        :param screen: Surface, на котором будет происходить отрисовка
+        :param screen: Surface to draw on
         """
         if self.outline:
             pygame.draw.rect(screen, self.outline, (self.x - 2,
@@ -85,13 +84,13 @@ class Button:
 
     def update(self, events: List[pygame.event.Event]) -> bool:
         """
-        Метод проверки нажатия.
+        Press check method.
 
-        :param events: Список событий полученных путём вызова pygame.event.get()
-        :return: В случае если кнопку нажали action, True, иначе False
+        :param events: List of events received by calling pygame.event.get()
+        :return: If action was called, True, otherwise False
 
         .. note::
-            Если action пустой, True при нажатии всё равно вернётся.
+            If the action is empty, True will still return when clicked.
         """
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN \
@@ -103,11 +102,11 @@ class Button:
 
     def is_over(self, pos: Sequence[Union[int, float]]) -> bool:
         """
-        Проверка координат на нахождение внутри области кнопки
+        Coordinates check for being inside the button area
 
-        :param pos: Абсцисса и Ордината для проверки наведения
+        :param pos: Abscissa and Ordinate to check pointing
 
-        :return: True, если Абсцисса и Ордината находится в области кнопки, иначе False.
+        :return: True if the Abscissa and Ordinate are in the button area, otherwise False.
         """
         if self.x < pos[0] < self.x + self.width:
             if self.y < pos[1] < self.y + self.height:

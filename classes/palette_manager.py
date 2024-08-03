@@ -28,11 +28,11 @@ class PaletteManager:
 
     def get_palette(self, palette_name: str) -> Palette:
         """
-        Получить палитру в заранее подгруженном кэше.
+        Get the palette in the preloaded cache.
 
-        :param palette_name: Название файлов в папке ``palettes/``
-        :return: Палитру цветов.
-        :raises IndexError: Если палитры не существует в кэше
+        :param palette_name: Name of the palette in the folder ``palettes/``
+        :return: Colour palette.
+        :raises ValueError: If the palette does not exist in the folder
         """
         possible_palettes = [palette for palette in self._palettes if palette.name == palette_name]
         if len(possible_palettes) == 0:

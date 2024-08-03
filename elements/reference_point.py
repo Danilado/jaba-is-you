@@ -226,22 +226,23 @@ class ReferencePoint(GameStrategy):
 
     def parse_file(self, level_name: str, path_to_file: str):
         """
-        Парсинг уровней. Добавляет объекты в :attr:`~.Draw.matrix`.
-        :param path_to_file: Папке в которой хранится лвл
-        :param level_name: Название уровня в папке
-        :raises OSError: Если какая либо проблема с открытием файла.
+        Level Parsing. Adds objects to :attr:`~.Draw.matrix`.
+
+        :param level_name: Name of the desired level
+        :param path_to_level: Path to the desired level
+        :raises OSError: If there's any problem opening the file.
         """
         self.level_palette, self.size, self.matrix = parse_file(level_name, path_to_file)
 
     def get_neighbours(self, y, x) -> List:
-        """Ищет соседей клетки сверху, справа, снизу и слева
+        """Looking for cell neighbours on top, right, bottom and left
 
-        :param y: координата на матрице по оси y идёт первым,
-        потому что ориентирование на матрице происходит зеркально относительно нормального
+        :param y: the y-axis coordinate on the matrix comes first
+            because the orientation on the matrix is mirrored relative to the normal one
         :type y: int
-        :param x: координата на матрице по оси x
+        :param x: x-axis coordinate on the matrix
         :type x: int
-        :return: Массив с четырьмя клетками-соседями в порядке сверху, справа, снизу, слева
+        :return: Array with four neighbouring cells in the order top, right, bottom, left
         :rtype: List[]
         """
         offsets = [
@@ -307,13 +308,13 @@ class ReferencePoint(GameStrategy):
                                                                               True))
 
     def draw(self, events: List[pygame.event.Event], delta_time_in_milliseconds: int) -> Optional[State]:
-        """Отрисовывает интерфейс загрузчика и обрабатывает все события
+        """Draws and handles all events
 
-        :param events: События, собранные окном pygame
+        :param events: Events collected by the window
         :type events: List[pygame.event.Event]
-        :param delta_time_in_milliseconds: Время между нынешним и предыдущим кадром (unused)
+        :param delta_time_in_milliseconds: Time between the current frame and the previous frame (unused, sadly)
         :type delta_time_in_milliseconds: int
-        :return: Возвращает состояние для правильной работы game_context
+        :return: Returns the state for proper game_context operation
         """
         map_surface = pygame.Surface((self.size[0] * 50, self.size[1] * 50))
         self._state = None

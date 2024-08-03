@@ -13,19 +13,20 @@ from typing import Optional
 
 class ObjectButton(Button):
     """
-    Класс 2-й кнопки, предназначенной для отлавливания нажатий в редакторе карт.
-    Эта кнопка отличается от прошлой, тем что имеем свойства как и у :class:`~classes.objects.GameObject`.
+    The class of the 2nd button, designed to catch clicks in the map editor.
+    This button differs from the previous one, because it has properties like in :class:`~classes.objects.GameObject`.
 
-    :ivar x: Абсцисса положения
-    :ivar y: Ордината положения
-    :ivar width: Ширина в пикселях
-    :ivar height: Высота в пикселях
-    :ivar outline: Цвет контура
-    :ivar settings: Настройка цветов
-    :ivar text: Текст
-    :ivar action: Функция вызывающаяся при нажатии
-    :ivar is_text: Есть ли воплощение кнопки в виде блока
-    :ivar direction: Направление кнопки
+
+    :ivar x: Position abscissa in pixels
+    :ivar y: Position ordinate in pixels
+    :ivar width: Width in pixels
+    :ivar height: Height in pixels
+    :ivar outline: Outline colour
+    :ivar button_settings: Colour settings
+    :ivar text: Button text
+    :ivar action: Function called when pressed
+    :ivar is_text: Is there an implementation of the button in the form of a block
+    :ivar direction: Button direction
     """
 
     def __init__(self, x, y, width, height, outline, button_settings, text="",

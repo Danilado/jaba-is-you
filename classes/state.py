@@ -12,12 +12,11 @@ if TYPE_CHECKING:
 @dataclass
 class State:
     """
-    Является структурой хранящий дополнительную информацию для GameState,
-    например какой GameStrategy необходимо сменить.
-    Необходим просто для замены кортежа.
+    A structure storing additional information for GameState, e.g. which GameStrategy should be changed.
+    Necessary just to change a tuple.
 
-    :cvar game_state: Изменение в :class:`classes.game_context.GameContext`
-    :cvar switch_to: Опциональный тип :class:`classes.game_strategy.GameStrategy`.
+    :cvar game_state: Change in :class:`classes.game_context.GameContext`
+    :cvar switch_to: Optional :class:`classes.game_strategy.GameStrategy`.
     """
     game_state: "GameState"
     switch_to: "Optional[Union[Type[GameStrategy], Callable[[SURFACE], GameStrategy]]]" = None

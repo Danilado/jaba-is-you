@@ -53,33 +53,20 @@ OBJECTS = [*TEXT_ONLY, 'algae', 'arrow', 'baba', 'badbad', 'banana', 'bat', 'bed
            'trumpet', 'turnip', 'turtle', 'ufo', 'vase', 'vine', 'wall', 'water', 'what', 'wind', 'worm'
            ]
 
-NOUNS = [
-    'algaе', 'all', 'anni', 'arrow', 'baba', 'badbad', 'banana', 'bat', 'bed', 'bee', 'belt', 'bird', 'blob', 'blossom',
-    'car', 'boba', 'bog', 'bolt', 'bomb', 'book', 'bottle', 'box', 'brick', 'bubble', 'bucket', 'burger', 'cake', 'cog',
-    'boat', 'cart', 'cash', 'cat', 'chair', 'cheese', 'circle', 'cliff', 'clock', 'cloud',  'crab', 'crystal', 'pawn',
-    'cup', 'cursor', 'dog', 'donut', 'door', 'door2', 'dot', 'drink', 'drum', 'dust', 'ear', 'edge', 'egg', 'empty',
-    'error', 'eye', 'fence', 'fire', 'fish', 'flag', 'flower', 'fofo', 'foliage', 'foot', 'fort', 'frog', 'fruit',
-    'fungi', 'fungus', 'gate', 'gem', 'ghost', 'grass', 'group', 'guitar', 'hand', 'hedge', 'hihat', 'house', 'husk',
-    'husks', 'ice', 'image', 'it', 'jaba', 'jelly', 'jiji', 'keke', 'key', 'knight', 'ladder', 'lamp', 'lava', 'leaf',
-    'line', 'lizard', 'lock', 'love', 'letters', 'me', 'mirror', 'monitor', 'monster', 'moon', 'nose', 'orb', 'pants',
-    'piano', 'pillar', 'pipe', 'pixel', 'pizza', 'plane', 'planet', 'plank', 'potato', 'pumpkin', 'rain', 'reed', 'bug',
-    'ring', 'road', 'robot', 'rock', 'rocket', 'rose', 'rubble', 'sax', 'seastar', 'seed', 'shell', 'shirt', 'shovel',
-    'sign', 'skull', 'spike', 'sprout', 'square', 'star', 'statue', 'stick', 'stump', 'sun', 'sword', 'table', 'teeth',
-    'tile', 'tower', 'track', 'train', 'trash', 'tree', 'trees', 'triangle', 'trumpet', 'turnip', 'turtle',
-    'ufo', 'vase', 'vine', 'wall', 'water', 'what', 'wind', 'worm', 'algaе', 'all', 'anni', 'arrow', 'baba', 'badbad',
-    'banana', 'bat', 'bed', 'bee', 'belt', 'bird', 'blob', 'blossom', 'boat', 'boba', 'bog', 'bolt', 'bomb', 'book',
-    'bottle', 'box', 'brick', 'bubble', 'bucket', 'bug', 'burger', 'cake', 'car', 'cart', 'cash', 'cat', 'chair',
-    'cheese', 'circle', 'cliff', 'clock', 'cloud', 'cog', 'crab', 'crystal', 'cup', 'cursor', 'dog', 'donut', 'door',
-    'door2', 'dot', 'drink', 'drum', 'dust', 'ear', 'edge', 'egg', 'empty', 'error', 'eye', 'fence', 'fire', 'fish',
-    'foliage', 'foot', 'fort', 'frog', 'fruit', 'fungi', 'fungus', 'gate', 'gem', 'ghost', 'grass', 'group', 'guitar',
-    'hand', 'hedge', 'hihat', 'house', 'husk', 'husks', 'ice', 'image', 'it', 'jelly', 'jiji', 'keke', 'key', 'knight',
-    'ladder', 'lamp', 'lava', 'leaf', 'level', 'lever', 'lift', 'lily', 'line', 'lizard', 'lock', 'love', 'letters',
-    'me', 'mirror', 'monitor', 'monster', 'moon', 'nose', 'orb', 'pants', 'pawn', 'piano', 'pillar', 'pipe', 'pixel',
-    'pizza', 'plane', 'planet', 'plank', 'potato', 'pumpkin', 'rain', 'reed', 'ring', 'road', 'robot', 'rock', 'rocket',
-    'rose', 'rubble', 'sax', 'seastar', 'seed', 'shell', 'shirt', 'shovel', 'sign', 'skull', 'spike', 'sprout',
-    'square', 'star', 'statue', 'stick', 'stump', 'sun', 'sword', 'table', 'teeth', 'text', 'tile', 'tower', 'track',
-    'train', 'trash', 'tree', 'trees', 'triangle', 'trumpet', 'turnip', 'turtle', 'ufo', 'vase', 'vine', 'wall',
-    'water', 'what', 'wind', 'worm', 'flag', 'flower', 'fofo', 'level', 'lever', 'lift', 'lily',
+NOUNS = ['algae', 'all', 'anni', 'arrow', 'baba', 'badbad', 'banana', 'bat', 'bed', 'bee', 'belt', 'bird', 'blob',
+         'blossom', 'boat', 'boba', 'bog', 'bolt', 'bomb', 'book', 'bottle', 'box', 'brick', 'bubble', 'bucket', 'bug',
+         'burger', 'cake', 'car', 'cart', 'cash', 'cat', 'chair', 'cheese', 'circle', 'cliff', 'clock', 'cloud', 'cog',
+         'crab', 'crystal', 'cup', 'cursor', 'dog', 'donut', 'door', 'door2', 'dot', 'drink', 'drum', 'dust', 'ear',
+         'edge', 'egg', 'empty', 'error', 'eye', 'fence', 'fire', 'fish', 'flag', 'flower', 'fofo', 'foliage', 'foot',
+         'fort', 'frog', 'fruit', 'fungi', 'fungus', 'gate', 'gem', 'ghost', 'grass', 'group', 'guitar', 'hand',
+         'hedge', 'hihat', 'house', 'husk', 'husks', 'ice', 'image', 'it', 'jaba', 'jelly', 'jiji', 'keke', 'key',
+         'knight', 'ladder', 'lamp', 'lava', 'leaf', 'letters', 'level', 'lever', 'lift', 'lily', 'line', 'lizard',
+         'lock', 'love', 'me', 'mirror', 'monitor', 'monster', 'moon', 'nose', 'orb', 'pants', 'pawn', 'piano',
+         'pillar', 'pipe', 'pixel', 'pizza', 'plane', 'planet', 'plank', 'potato', 'pumpkin', 'rain', 'reed', 'ring',
+         'road', 'robot', 'rock', 'rocket', 'rose', 'rubble', 'sax', 'seastar', 'seed', 'shell', 'shirt', 'shovel',
+         'sign', 'skull', 'spike', 'sprout', 'square', 'star', 'statue', 'stick', 'stump', 'sun', 'sword', 'table',
+         'teeth', 'text', 'tile', 'tower', 'track', 'train', 'trash', 'tree', 'trees', 'triangle', 'trumpet', 'turnip',
+         'turtle', 'ufo', 'vase', 'vine', 'wall', 'water', 'what', 'wind', 'worm'
 ]
 
 OPERATORS = [

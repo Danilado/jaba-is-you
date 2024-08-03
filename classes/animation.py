@@ -4,32 +4,33 @@ import pygame
 
 from global_types import SURFACE
 
-# Вот как мне не нравится всё это. ключ - задержка, значение - время
+# I don't like all this stuff. the key is delay, the value is time.
 _sync: Dict[int, int] = {}
 
 
 class Animation:
     """
-    Класс анимации
+    Animation class
 
-    :ivar sprites: Список картинок которые будут меняться каждые :attr:`~.Animation.sprite_switch_delay`
-    :ivar sprite_switch_delay: Задержка в миллисекундах между кадрами
-    :ivar position: Позиция в пикселях где будет отрисовываться
-    :ivar synchronize: Синхронизировать с остальными анимациями, чтобы кадры менялись одновременно в всех анимациях.
+    :ivar sprites: A list of pictures that will change every :attr:`~.Animation.sprite_switch_delay`
+    :ivar sprite_switch_delay: Delay in milliseconds between frames
+    :ivar position: Position in pixels where it will be rendered
+    :ivar synchronize:
+        Does it need to be synchronised with the rest of the animations so that frames change at the same time in all animations.
     """
 
     def __init__(self, sprites: List[pygame.surface.Surface], sprite_switch_delay: int,
                  position: Tuple[int, int], synchronize: bool = True):
         """
-        Инициализация анимации
+        Animation initialisation
 
-        :param sprites:  Список картинок которые будут меняться каждые **sprite_switch_delay**
-        :param sprite_switch_delay: Задержка в миллисекундах между кадрами
-        :param position: Позиция в пикселях где будет отрисовываться
+        :param sprites: A list of pictures that will change every :attr:`~.Animation.sprite_switch_delay`
+        :param sprite_switch_delay: Delay in milliseconds between frames
+        :param position: Position in pixels where it will be rendered
         :param synchronize:
-            Синхронизировать ли с остальными анимациями, чтобы кадры менялись одновременно в всех анимациях.
+            Does it need to be synchronised with the rest of the animations so that frames change at the same time in all animations.
         """
-        # quswadress: Под чем я был когда писал это?
+        # quswadress: What was I thinking when I wrote that?
         # if len(sprites) == 0:
         #     raise ValueError("Sprites are empty")
         self.position: Tuple[int, int] = position
@@ -44,19 +45,18 @@ class Animation:
         else:
             self._timer = pygame.time.get_ticks()
 
-    @property  # Danilado: Не слишком ли длинное имя для property?
-    # quswadress: Длинное имя? Извините, в следующий раз буду называть _, csi, или просто i, а вы сами будете додумывать
-    # ...для чего этот i нужен. А если серьёзно, то сокращения порой непонятны, я придерживаюсь принципа:
-    # ...много букв, зато сразу понятно. Скажи спасибо что я назвал GameStrategy именно так, а не
-    # ...AbstractGameGraphicalUserInterfaceStrategy, или же
-    # ...абстрактная стратегия игрового графического пользовательского интерфейса.
+    @property  # Danilado: Isn't that too long a name for a property?
+    # quswadress: Long name? Sorry, next time I'll call it _, csi, or just i, and you will figure out what
+    # ...this i is for. And seriously, abbreviations are sometimes unclear; I stick to the principle: a lot of letters,
+    # ...but immediately understandable. Be thankful that I called GameStrategy like that and not
+    # ...AbstractGameGraphicalUserInterfaceStrategy
     def current_sprites_index(self) -> int:
         """
-        :getter: Возвращает текущий номер элемента в :attr:`~.Animation.sprites` который отрисовывается на экране
+        :getter: Returns the current index of the element in the :attr:`~.Animation.sprites` that is drawn
 
         :setter:
-            Устанавливает текущий номер элемента который отрисовывается на экране в :attr:`~.Animation.sprites`,
-            если номер > длины :attr:`~.Animation.sprites`, или номер отрицательный, возбуждается исключение
+            Sets the current number of the item that is drawn on the screen in the :attr:`~.Animation.sprites`,
+            if number > length of :attr:`~.Animation.sprites` or number is negative, an exception is raised
         """
         return self._current_sprites_index
 
@@ -70,11 +70,11 @@ class Animation:
     @property
     def current_sprite(self) -> pygame.surface.Surface:
         """
-        :getter: Возвращает текущий спрайт который отрисовывается на экране
+        :getter: Returns the current sprite that is drawn on the screen
 
         :setter:
-            Устанавливает текущий спрайт который отрисовывается на экране в :attr:`~.Animation.sprites`,
-            если спрайта не существует в :attr:`~.Animation.sprites`, тогда возбуждается исключение.
+            Sets the current sprite that is being rendered on the screen into :attr:`~.Animation.sprites`,
+            if the sprite does not exist in :attr:`~.Animation.sprites`, an exception is raised
         """
         return self.sprites[self.current_sprites_index]
 
@@ -99,7 +99,7 @@ class Animation:
 
     def update(self) -> bool:
         """
-        Обновление :attr:`~.Animation.current_sprite`.
+        :attr:`~.Animation.current_sprite` update.
         """
         if self.is_need_to_switch_frames:
             if self.synchronize:
@@ -107,16 +107,14 @@ class Animation:
                 self._timer = _sync[self.sprite_switch_delay]
             else:
                 self._timer = pygame.time.get_ticks()
-            self.current_sprites_index = (
-                self._current_sprites_index + 1) % len(self.sprites)
+            self.current_sprites_index = (self._current_sprites_index + 1) % len(self.sprites)
             return True
         return False
 
     def draw(self, screen: SURFACE) -> None:
         """
-        Отрисовка :attr:`~.Animation.current_sprite` на :attr:`~.Animation.position` в ``screen``
+        Draw the :attr:`~.Animation.current_sprite` to a :attr:`~.Animation.position` in the ``screen``
 
-        :param screen: Экран на котором будет отрисовываться :attr:`~.Animation.current_sprite`
-        :return:
+        :param screen: The screen on which the :attr:`~.Animation.current_sprite` will be rendered.
         """
         screen.blit(self.current_sprite, self.position)

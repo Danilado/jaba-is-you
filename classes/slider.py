@@ -8,34 +8,24 @@ if TYPE_CHECKING:
 
 class Slider:
     """
-    Класс ползунка
-
-    :ivar x: Абсцисса положения в пикселях
-    :ivar y: Ордината положения в пикселях
-    :ivar width: Ширина в пикселях
-    :ivar height: Высота в пикселях
-    :ivar color_rect: Цвет полоски
-    :ivar circle_center: Центр кружочка
-    :ivar radius: Радиус кружочка
-    :ivar color_circle: Цвет кружочка
-    :ivar action: Функция вызывающаяся при нажатии
+    Slider class
     """
 
     def __init__(self, xpx: float, ypx: float, width: float, height: float, color_rect,
                  circle_center: Tuple[float, float],
                  radius: float, color_circle, action: Optional[Callable[[], Any]]):
         """
-        Инициализация ползунка
+        Slider initialisation
 
-        :ivar x: Абсцисса положения в пикселях
-        :ivar y: Ордината положения в пикселях
-        :ivar width: Ширина в пикселях
-        :ivar height: Высота в пикселях
-        :ivar color_rect: Цвет полоски
-        :ivar circle_center: Центр кружочка
-        :ivar radius: Радиус кружочка
-        :ivar color_circle: Цвет кружочка
-        :ivar action: Функция вызывающаяся при нажатии
+        :ivar x: Position abscissa in pixels
+        :ivar y: Position ordinate in pixels
+        :ivar width: Width in pixels
+        :ivar height: Height in pixels
+        :ivar color_rect: Bar colour
+        :ivar circle_center: Colour of the centre of the circle
+        :ivar radius: Circle radius
+        :ivar color_circle: Ciricle colour
+        :ivar action: Function called when pressed
         """
         self.xpx = xpx
         self.ypx = ypx
@@ -50,9 +40,9 @@ class Slider:
 
     def draw(self, screen: "SURFACE"):
         """
-        Метод отрисовки ползунка
+        Slider rendering method
 
-        :param screen: Surface, на котором будет происходить отрисовка
+        :param screen: Surface to draw on
         """
         pygame.draw.rect(screen, self.color_rect, (self.xpx, self.ypx, self.width, self.height), 0)
         pygame.draw.circle(screen, self.color_circle, self.circle_center, self.radius)
@@ -69,11 +59,11 @@ class Slider:
 
     def is_over(self, pos: Sequence[Union[int, float]]) -> bool:
         """
-        Проверка координат на нахождение внутри области ползунка
+        Coordinates check for being inside the slider area
 
-        :param pos: Абсцисса и Ордината для проверки наведения
+        :param pos: Abscissa and Ordinate to check pointing
 
-        :return: True, если Абсцисса и Ордината находится в области кнопки, иначе False.
+        :return: True if the Abscissa and Ordinate are in the slider area, otherwise False.
         """
         if self.xpx < pos[0] < self.xpx + self.width:
             if self.ypx < pos[1] < self.ypx + self.height:

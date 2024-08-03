@@ -143,5 +143,5 @@ class MoveCursor:
             matrix[x][y].pop(num_el)
 
     def check_events(self):
-        """Метод обработки событий"""
+        """Event handling method"""
         self.turning_side = get_pressed_direction()

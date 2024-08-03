@@ -5,6 +5,7 @@ from sys import exit
 from typing import List, Optional
 
 import pygame
+# noinspection PyUnresolvedReferences
 from jaba_speedup import copy_matrix
 
 import settings
@@ -22,11 +23,11 @@ from utils import settings_saves
 
 
 def unparse_all(state):
-    """Создание строки для сохранения состояния сетки в файл за одну запись если он не пустой
+    """Creating a line to save the grid state to a file in one write if it is not empty
 
-    :param state: Трёхмерный массив состояния сетки
+    :param state: Three-dimensional grid state array
     :type state: list
-    :return: Строка для записи
+    :return: Line for writing
     :rtype: str
     """
     string = ''
@@ -41,29 +42,28 @@ def unparse_all(state):
 
 def direction_to_unicode(direction: int) -> str:
     """
-    Направление в юникод-стрелку
+    Directions to Unicode Arrows
 
     :param direction:
-        0 - Вверх
-        1 - Вправо
-        2 - Вниз
-        3 - Влево
-    :return: Один символ - Юникод-стрелка
+        0 - Up
+        1 - Right
+        2 - Down
+        3 - Left
+    :return: One symbol - Unicode Arrow
     """
     return '↑' if direction == 0 else '→' if direction == 1 else '↓' if direction == 2 else '←'
 
 
 class Editor(GameStrategy):
-    """Класс редактора уровней
+    """Level editor class
 
-    :param GameStrategy: Является игровой стратегией и наследуется
-    от соответственного класса
+    :param GameStrategy: It is a game strategy and is inherited from the corresponding class
     """
 
     def __init__(self, screen: pygame.Surface):
-        """Класс редактора уровней
+        """Level editor constructor
 
-        :param screen: Окно для отрисовки
+        :param screen: Window for drawing
         :type screen: pygame.Surface
         """
         super().__init__(screen)
@@ -173,9 +173,9 @@ class Editor(GameStrategy):
             self.border_screen = self.border_screen.convert_alpha()
 
     def save(self, state, name=None):
-        """Сохранение трёхмерного массива в память
+        """Saving a 3D array to disc
 
-        :param state: Трёхмерный массив состояния сетки
+        :param state: Three-dimensional grid state array
         :type state: list
         """
         string = f"{self.current_palette.name} {self.size[0]} {self.size[1]}\n"
@@ -189,10 +189,10 @@ class Editor(GameStrategy):
                 file.write(string)
 
     def page_turn(self, number: int):
-        """Меняет страницу списка объектов
+        """Changes the object list page
 
-        :param n: Вперёд или назад перелистывать и на какое количество страниц
-        :type n: int
+        :param number: Forward or backward flip and how many pages
+        :type number: int
         """
         if self.filter == '':
             self.pagination_limit = ceil(len(OBJECTS) / 12)
@@ -201,10 +201,10 @@ class Editor(GameStrategy):
 
     def parse_buttons(self):
         """
-        Даёт список из 12-и или менее кнопок, расположенных на странице кнопок (?),
-        в которой в данный момент находится редактор
+        Gives a list of 12 or fewer buttons located on the buttons (?) page,
+        where the editor is currently located
 
-        :return: массив кнопок
+        :return: button array
         :rtype: list
         """
         filtered_array = []
@@ -228,51 +228,52 @@ class Editor(GameStrategy):
         return button_array
 
     def unresize(self):
-        """Меняет разрешение экрана с расширенного на изначальное через магические константы 1600х900"""
+        """Changes the screen resolution from extended to original via the magic constants 1600x900"""
         self.screen = pygame.display.set_mode(
             (1600 * settings.WINDOW_SCALE, 900 * settings.WINDOW_SCALE))
 
     def safe_exit(self):
-        """Функция подготовки к безопасному выходу из редактора без потери изменений"""
+        """Prepare to safely exit the editor without losing changes"""
         self.save(self.current_state, self.level_name)
         self.unresize()
 
     def extreme_exit(self):
-        """Функция подготовки к безопасному выходу из редактора без потери изменений"""
+        """Prepare to safely exit the editor without losing changes"""
         self.save(self.current_state, None)
         self.unresize()
 
     def set_name(self, string: str):
-        """Функция смены названия объекта, а следовательно текстур и правил.
+        """Changing the name of the object, and therefore the textures and rules.
 
-        :param string: Новое название объекта
+        :param string: New object name
         :type string: str
         """
         self.name = string
 
     def turn(self, direction: int):
-        """Функция поворота объекта
+        """Rotate object
 
-        :param direction: направление, где 1 - по часовой стрелке, а -1 - против часовой
+        :param direction: direction where 1 - clockwise and -1 anti-clockwise
         """
         self.direction = (self.direction - direction) % 4
         self.page_turn(0)
 
     def set_tool(self, number: int):
-        """Функция смены инструмента
+        """Tool change
 
-        :param n: [0 - 2], где 0 - удалить, 1 - создать, а 2 - исследовать клетку и вывести содержимое в консоль
-        :type n: int
+        :param number:
+            [0 - 2] where 0 - remove, 1 - create and 2 - investigate the cell and output the contents to the console
+        :type number: int
         """
         self.tool = number
 
     def is_text_swap(self):
-        """Меняет является ли объект текстом, или нет"""
+        """Changes whether the object is text or not"""
         self.is_text = not self.is_text
         self.page_turn(0)
 
     def undo(self):
-        """Отменяет последнее изменение"""
+        """Undoes the last change"""
         if len(self.changes) != 0:
             self.current_state = self.changes[-1]
             self.changes.pop()
@@ -286,14 +287,13 @@ class Editor(GameStrategy):
                             game_object.animation = game_object.animation_init()
 
     def get_neighbours(self, y, x) -> List[Object]:
-        """Ищет соседей клетки сверху, справа, снизу и слева
+        """Looking for cage neighbours above, right, below and left
 
-        :param y: координата на матрице по оси y идёт первым,
-        потому что ориентирование на матрице происходит зеркально относительно нормального
+        :param y: y-axis coordinate on the matrix
         :type y: int
-        :param x: координата на матрице по оси x
+        :param x: x-axis coordinate on the matrix
         :type x: int
-        :return: Массив с четырьмя клетками-соседями в порядке сверху, справа, снизу, слева
+        :return: Array with four neighbouring cells in the order top, right, bottom, left
         :rtype: List[]
         """
         offsets = [
@@ -302,7 +302,7 @@ class Editor(GameStrategy):
             (0, 1),
             (-1, 0),
         ]
-        neighbours = [None for _ in range(4)]
+        neighbours = [[] for _ in range(4)]
         if x == 0:
             neighbours[0] = [self.empty_object]
         elif x == settings.RESOLUTION[1] // int(50 * settings.WINDOW_SCALE) - 1:
@@ -321,8 +321,8 @@ class Editor(GameStrategy):
 
     def create(self):
         """
-        Если в выделенной клетке нет объекта с таким же именем, создаёт его там и
-        записывает предыдущее состояние сетки в архивный массив
+        If there is no object with the same name in the selected cell, creates it there and
+        writes the previous grid state to the archive array
         """
         if self.name is not None:
             flag = 0
@@ -333,7 +333,7 @@ class Editor(GameStrategy):
             if not flag:
                 neighbours = []
                 if self.name in STICKY and not self.is_text:
-                    # ЭТО НУЖНО ДЕЛАТЬ ДО ДОБАВЛЕНИЯ В МАТРИЦУ
+                    # THIS SHOULD BE DONE BEFORE ADDING IT TO THE MATRIX
                     neighbours = self.get_neighbours(
                         self.focus[0], self.focus[1])
                 self.changes.append(copy_matrix(self.current_state))
@@ -341,7 +341,7 @@ class Editor(GameStrategy):
                     Object(x=self.focus[0], y=self.focus[1], direction=self.direction, name=self.name,
                            is_text=self.is_text, movement_state=0, neighbours=neighbours, palette=self.current_palette))
                 if self.name in STICKY and not self.is_text:
-                    # ЭТО НУЖНО ДЕЛАТЬ ПОСЛЕ ДОБАВЛЕНИЯ ОБЪЕКТА В МАТРИЦУ
+                    # THIS SHOULD BE DONE AFTER ADDING AN OBJECT TO THE MATRIX
                     for array in neighbours:
                         for neighbour in array:
                             if neighbour.name in STICKY and not neighbour.is_text:
@@ -350,8 +350,8 @@ class Editor(GameStrategy):
                                 neighbour.animation = neighbour.animation_init()
 
     def delete(self):
-        """Если в клетке есть объекты, удаляет последний созданный из них"""
-        # ? Нужно ли выбирать что удалять?
+        """If there are objects in the cell, deletes the last object created from them"""
+        # ? Is it necessary to choose what to remove?
         if len(self.current_state[self.focus[1]][self.focus[0]]) > 0:
             self.changes.append(copy_matrix(self.current_state))
             self.current_state[self.focus[1]][self.focus[0]].pop()
@@ -372,7 +372,7 @@ class Editor(GameStrategy):
                                               ][self.focus[0]][-1].is_text
 
     def overlay(self):
-        """Вызывает меню управления редактора"""
+        """Opens the editor's control menu"""
         self.unresize()
         self.state = State(GameState.SWITCH, partial(EditorOverlay, self))
 
@@ -398,15 +398,13 @@ class Editor(GameStrategy):
         self.text_timestamp = pygame.time.get_ticks()
 
     def draw(self, events: List[pygame.event.Event], delta_time_in_milliseconds: int) -> Optional[State]:
-        """Отрисовывает редактор (включая все его элементы) и обрабатывает все действия пользователя
+        """Draws the editor (including all its elements) and handles all user actions
 
-        :param events: События, собранные окном pygame
+        :param events: Events collected by the window
         :type events: List[pygame.event.Event]
-        :param delta_time_in_milliseconds:
-            Время между нынешним
-            и предыдущим кадром (unused)
+        :param delta_time_in_milliseconds: Time between the current frame and the previous frame (unused, sadly)
         :type delta_time_in_milliseconds: int
-        :return: Возвращает состояние для правильной работы game_context
+        :return: Returns the state for proper game_context operation
         :rtype: Optional[State]
         """
 
@@ -477,7 +475,7 @@ class Editor(GameStrategy):
                                       (50*settings.WINDOW_SCALE*self.scale)),
                                       int((event.pos[1] - self.window_offset[0]) //
                                       (50*settings.WINDOW_SCALE*self.scale)))
-                        # NOTE ВОЗМОЖНО СТОИТ ДЕЛИТ НА scale
+                        # NOTE MIGHT BE BETTER TO DIVIDE IT BY SCALE.
                 else:
                     self.focus = (-1, -1)
             if event.type == pygame.MOUSEBUTTONDOWN or (pygame.key.get_mods() & pygame.KMOD_SHIFT and pygame.mouse.get_pressed()[0]):

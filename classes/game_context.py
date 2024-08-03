@@ -15,16 +15,16 @@ if TYPE_CHECKING:
 
 class GameContext:
     """
-    Основной класс игры вокруг которого всё будет крутиться.
+    The main class of the game around which everything will be.
 
-    :ivar screen: Экран на котором будет всё отрисовываться
+    :ivar screen: The screen on which everything will be rendered
     """
 
     def __init__(self, game_strategy: Union[Callable[[SURFACE], "GameStrategy"], Type["GameStrategy"]]):
         """
-        Инициализация класса
+        Class initialisation
 
-        :param game_strategy: GameStrategy которая будет отрисовываться по умолчанию.
+        :param game_strategy: GameStrategy that will be rendered by default.
         """
         saves = settings_saves()
         if saves[3] == 0:
@@ -40,18 +40,14 @@ class GameContext:
 
         self._game_strategy: "GameStrategy"
         self.game_strategy = game_strategy  # type: ignore
-        # См. https://github.com/python/mypy/issues/3004
-
-        pygame.init()
-        pygame.font.init()
-        pygame.mixer.init()
+        # See https://github.com/python/mypy/issues/3004
 
     @property
     def game_strategy(self) -> "GameStrategy":
         """
-        :setter: Устанавливает :class:`classes.game_strategy.GameStrategy` в игру
+        :setter: Sets :class:`classes.game_strategy.GameStrategy` in the game
 
-        :getter: Возвращает текущую :class:`classes.game_strategy.GameStrategy`
+        :getter: Returns current :class:`classes.game_strategy.GameStrategy`
         """
         return self._game_strategy
 
@@ -66,17 +62,15 @@ class GameContext:
         else:
             self._history.append(self._game_strategy)
         if DEBUG:
-            print(
-                f'Current game strategy is {self._game_strategy.__class__.__name__}; History a.k.a stack: ', end="")
-            print(
-                [game_strategy.__class__.__name__ for game_strategy in self._history], indent=4)
+            print(f'Current game strategy is {self._game_strategy.__class__.__name__}; History a.k.a stack: ', end="")
+            print([game_strategy.__class__.__name__ for game_strategy in self._history])
 
     @property
     def running(self) -> bool:
         """
-        :setter: Устанавливает переменную в основном цикле игры. Если False игра выключится
+        :setter: Sets a variable in the main game loop. If False the game will shut down
 
-        :return: Запущена ли игра?
+        :return: Is the game running?
         """
         return self._running
 
@@ -87,14 +81,14 @@ class GameContext:
     @property
     def history(self) -> List["GameStrategy"]:
         """
-        :setter: Изменять его нельзя, используйте State
+        :setter: You can't change it, use State
 
-        :return: Стек вызовов GameStrategy, например [MainMenu, MainLevel, Game]
+        :return: GameStrategy call stack, e.g. [MainMenu, MainLevel, Game]
         """
         return self._history
 
     def run(self):
-        """Функция запуска игры"""
+        """Game start function"""
         clock = pygame.time.Clock()
         pygame.mixer.music.set_volume(settings_saves()[2])
         while self.running:
@@ -132,10 +126,8 @@ class GameContext:
 
                             self.game_strategy.on_init()
                         else:
-                            raise ValueError(
-                                "Can't back; Use debug to show the history of strategies; ")
+                            raise ValueError("Can't back; Use debug to show the history of strategies; ")
                     else:
-                        raise ValueError(
-                            f"draw_state.game_state: {draw_state.game_state}. WTF is this!?")
+                        raise ValueError(f"draw_state.game_state: {draw_state.game_state}. WTF is this!?")
             except KeyboardInterrupt:
                 self.running = False

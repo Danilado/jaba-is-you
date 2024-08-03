@@ -18,7 +18,7 @@ from global_types import SURFACE
 
 class MainMenu(GameStrategy):
     """
-    Стратегия главного меню
+    Main menu strategy
     """
 
     def __init__(self, screen: SURFACE):

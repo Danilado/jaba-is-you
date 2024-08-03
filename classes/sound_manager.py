@@ -7,7 +7,7 @@ from classes.base_download_manager import BaseDownloadManager
 
 
 class SoundManager(BaseDownloadManager):
-    """Класс необходимый для установки и кеширования музыки и звуков"""
+    """The class is necessary to set and cache sounds"""
     path = Path("./sounds/")
     url = "https://www.dropbox.com/s/krmadrogtl8tq9k/Music.zip?dl=1"
 

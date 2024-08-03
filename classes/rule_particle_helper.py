@@ -14,26 +14,28 @@ if TYPE_CHECKING:
 
 class ParticleMover:
     """
-    Класс, двигающий партиклы
+    The class that moves partials
     """
 
     def __init__(self, x_offset: Sequence[int], y_offset: Sequence[int], size: Sequence[int],
                  max_rotation: Sequence[int], wait_delay: float, duration: float, particle_sprite_name: str,
                  count: Optional[Sequence[int]] = None, sprite_colors: Optional[Sequence[COLOR]] = None):
         """
-        Конструктор класса
+        Class constructor
 
-        :param x_offset: Диапазон чисел в котором случайно будет выбираться отступ для партикла по оси x
-        :param y_offset: Диапазон чисел в котором случайно будет выбираться отступ для партикла по оси y
-        :param size: Диапазон чисел в котором случайно будет выбираться размер для партикла
-        :param max_rotation: Диапазон чисел в котором случайно будет выбираться градус поворота в конце анимации
-        :param wait_delay:
-            Число, обозначающее задержку между созданием партиклов, отрицательное если всегда вызывается вручную
-        :param duration: Длительность партикла
-        :param count: Диапазон чисел в котором случайно будет выбираться количество частиц за раз
-        :param particle_sprite_name: Название спрайта для партикла
+        :param x_offset:
+            Range of numbers in which the indentation for the particle on the x-axis will be randomly selected
+        :param y_offset:
+            Range of numbers in which the indentation for the particle on the x-axis will be randomly selected
+        :param size: The range of numbers in which the size for the particle will be randomly selected
+        :param max_rotation:
+            The range of numbers in which the degree of rotation for the particle will be randomly selected
+        :param wait_delay: Number representing the delay between particle creation, negative if always called manually
+        :param duration: Particle duration
+        :param count: Range of numbers in which the number of particles at a time will be randomly selected
+        :param particle_sprite_name: The name of the particle sprite
         """
-        # Настройки частиц
+        # Particle settings
         self.count = count if count is not None else range(1, 4)
         self.wait_delay: float = wait_delay
         self.duration: float = duration
@@ -43,7 +45,7 @@ class ParticleMover:
         self.max_rotation = max_rotation
         self.particle_sprite_name = particle_sprite_name
         self.sprite_colors: Optional[Sequence[COLOR]] = sprite_colors
-        # Ужасная подноготная TODO: которую желательно сделать отдельным классом
+        # Horrible background
         self._level_processor: Optional["PlayLevel"] = None
         self._rule_objects: Set[Object] = set()
         self._timer: Optional[float] = None
@@ -55,16 +57,16 @@ class ParticleMover:
     def update_on_apply(self, level_processor: "PlayLevel", rule_object: Object, color: Optional[str] = None,
                         force_not_start: bool = False):
         """
-        Инкапсуляция :attr:`~.ParticleMover.rule_object` и :attr:`~.ParticleMover.level_processor`
-        То есть устанавливает их.
+        Encapsulation :attr:`~.ParticleMover.rule_object` and :attr:`~.ParticleMover.level_processor`
+        That is, sets them.
 
         :param force_not_start:
-            Костыль. Если True, не вызывает :meth:`~.ParticleMover.start`.
-            Ставьте True, только если вы осознаёте что вы делаете.
-        :param level_processor: Обработчик уровня
-        :param rule_object: Объект к которому применяются партиклы
-        :param color: Объект из которого необходимо брать цвет
-        :return: Ничего
+            Workaround. If True, it does not cause the :meth:`~.ParticleMover.start`.
+            Only set True if you realise what you are doing.
+        :param level_processor: Level handler
+        :param rule_object: Object to which particles are applied
+        :param color: Object from which the colour is to be taken
+        :return: Nothing
         """
         if level_processor != self._level_processor:
             self._rule_objects.clear()
@@ -84,7 +86,7 @@ class ParticleMover:
         if not self.started and not force_not_start:
             self.start()
 
-    def update_on_rules_changed(self, new_rules: List[TextRule], rule_name: str, force_not_start: bool = False):
+    def update_on_rules_changed(self, new_rules: List[TextRule], rule_name: str):
         need_to_stop = True
         for rule in new_rules:
             rule_end = f' is {rule_name}'
@@ -98,9 +100,9 @@ class ParticleMover:
 
     def stop(self):
         """
-        Посылает запрос на остановку изменения частиц
+        Sends a request to stop the particle change
 
-        :return: Ничего
+        :return: Nothing
         """
         if not self.started:
             return
@@ -109,8 +111,9 @@ class ParticleMover:
 
     def start(self):
         """
-        Запускает изменение частиц
-        :return: Ничего
+        Starts the particle change
+
+        :return: Nothing
         """
         if self.started:
             return
@@ -119,12 +122,12 @@ class ParticleMover:
     @property
     def started(self) -> bool:
         """
-        .. getter: Возвращает bool, означающий запущен ли поток или нет
+        .. getter: Returns a bool indicating whether the thread is running or not
 
         .. setter:
-            Нету.
-            Используйте :meth:`~.ParticleMover.start` для запуска
-            или :meth:`~.ParticleMover.stop` для остановки
+            Nope.
+            Use :meth:`~.ParticleMover.start` to start
+            or :meth:`~.ParticleMover.stop` to stop
         """
         return self._timer is not None
 
@@ -158,6 +161,7 @@ class ParticleMover:
             ), color))
 
     def every_frame(self, force_draw: bool = False):
+        """There used to be a thread here, but now there's this function here"""
         if not force_draw and (self._timer is None or self.wait_delay < 0 or (time.time() - self._timer) < self.wait_delay):
             return
         for rule_object in self._rule_objects:

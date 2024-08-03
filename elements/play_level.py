@@ -141,13 +141,13 @@ class PlayLevel(GameStrategy):
 
     def parse_file(self, level_name: str, path_to_level: str):
         """
-        Парсинг уровней. Добавляет объекты в :attr:`~.Draw.matrix`.
+        Level Parsing. Adds objects to :attr:`~.Draw.matrix`.
 
         .. note::
-            Если вы хотите перезаписать карту, не забудьте удалить объекты из :attr:`~.Draw.matrix`
+            If you want to overwrite the map, remember to remove objects from the :attr:`~.Draw.matrix`
 
-        :param level_name: Название уровня в папке levels
-        :raises OSError: Если какая либо проблема с открытием файла.
+        :param level_name: Level name in the levels folder
+        :raises OSError: If there's any problem opening the file.
         """
         self.current_palette, self.size, self.start_matrix = parse_file(
             level_name, path_to_level)
@@ -156,14 +156,14 @@ class PlayLevel(GameStrategy):
             print(self.size)
 
     def get_neighbours(self, y, x) -> List:
-        """Ищет соседей клетки сверху, справа, снизу и слева
+        """Looking for cell neighbours on top, right, bottom and left
 
-        :param y: координата на матрице по оси y идёт первым,
-        потому что ориентирование на матрице происходит зеркально относительно нормального
+        :param y: the y-axis coordinate on the matrix comes first
+            because the orientation on the matrix is mirrored relative to the normal one
         :type y: int
-        :param x: координата на матрице по оси x
+        :param x: x-axis coordinate on the matrix
         :type x: int
-        :return: Массив с четырьмя клетками-соседями в порядке сверху, справа, снизу, слева
+        :return: Array with four neighbouring cells in the order top, right, bottom, left
         :rtype: List[]
         """
 
@@ -220,14 +220,13 @@ class PlayLevel(GameStrategy):
         return len(self.level_rules)
 
     def check_valid_range(self, x, y, delta_x, delta_y) -> bool:
-        """Проверяет выход за границы матрицы
-        в процессе движения
+        """Checks if the matrix is out of bounds during movement
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in y-axis
         :type delta_y: int
-        :return: Можно ли двигаться в данном направлении
+        :return: Is it possible to move in this direction
         :rtype: bool
         """
         return self.size[0] - 1 >= x + delta_x >= 0 \
@@ -959,9 +958,9 @@ class PlayLevel(GameStrategy):
         if self.status_cancel:
             new_time = pygame.time.get_ticks()
             if new_time > self.delta_cancel + 200:
-                # Тормозит при большом количестве объектов в матрице. TODO: Need optimization, algorithm is slow
-                is_history_of_matrix_empty = len(self.history_of_matrix) > 0
-                if is_history_of_matrix_empty:
+                # Slows down with a large number of objects in the matrix. TODO: Need optimization, algorithm is slow
+                is_history_of_matrix_not_empty = len(self.history_of_matrix) > 0
+                if is_history_of_matrix_not_empty:
                     self.matrix = self.history_of_matrix.pop()
                     self.check_matrix()
                     self.delta_cancel = new_time
@@ -973,7 +972,7 @@ class PlayLevel(GameStrategy):
                 for i in range(len(self.matrix)):
                     for j in range(len(self.matrix[i])):
                         for obj in self.matrix[i][j]:
-                            if is_history_of_matrix_empty:
+                            if is_history_of_matrix_not_empty:
                                 obj.movement.start_x_pixel = obj.xpx + obj.movement.x_pixel_delta
                                 obj.movement.start_y_pixel = obj.ypx + obj.movement.y_pixel_delta
                             else:
@@ -982,7 +981,7 @@ class PlayLevel(GameStrategy):
                                 obj.movement.x_pixel_delta = obj.movement.y_pixel_delta = 0
                             obj.x = j
                             obj.y = i
-                            if is_history_of_matrix_empty:
+                            if is_history_of_matrix_not_empty:
                                 obj.movement.x_pixel_delta = obj.xpx - obj.movement.start_x_pixel
                                 obj.movement.y_pixel_delta = obj.ypx - obj.movement.start_y_pixel
                             obj.movement.rerun(0.05)
@@ -1018,7 +1017,7 @@ class PlayLevel(GameStrategy):
                                        game_object.angle_3d / 180 * math.pi, self.matrix)
                         count_3d_obj += 1
 
-        # TODO by quswadress: И паттерн стратегия такой: Ну да, ну да, делайте свои большие if-ы, раздувайте классы!
+        # TODO by quswadress: And pattern strategy be like: Yeah, yeah, make your big ifs, bloat your classes!
         if level_3d:
             if self.count_3d_obj != count_3d_obj:
                 self.count_3d_obj = 0

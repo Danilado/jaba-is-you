@@ -12,13 +12,12 @@ class Palette:
     pixels: List[List[COLOR]]  # pixels[1][2] - x: 2, y: 1
 
     def draw(self, screen: SURFACE, pixel_size: int, x_pixel_offset: int, y_pixel_offset: int):
-        """
-        Отрисовка пикселей палитры
+        """Palette pixel drawing
 
-        :param screen: Экран на котором будут отрисовываться пиксели
-        :param pixel_size: Размер пикселей
-        :param x_pixel_offset: Отступ отрисовки по оси абсциссы
-        :param y_pixel_offset: Отступ отрисовки по оси ординат
+        :param screen: The screen on which the pixels will be rendered.
+        :param pixel_size: The size of a single pixel.
+        :param x_pixel_offset: Indent of drawing on the abscissa axis
+        :param y_pixel_offset: Indent of drawing on the ordinate axis
         """
         blit_sequences = []
         for y_palette_pixel, line in enumerate(self.pixels):
