@@ -18,24 +18,20 @@ from global_types import SURFACE
 
 class Loader(GameStrategy):
     """
-    Класс загрузчика уровней. На данный момент используется для
-    поиска файлов уровней в папке и их первичной обработки
+    Level loader class. Currently, it is used for
+    search for level files in a folder and their initial processing
     """
 
     def on_init(self):
         pass
 
-    def __init__(self, screen: SURFACE, from_editor_overlay=None, _=None):
-        """Инициализация загрузчика
+    def __init__(self, screen: SURFACE, from_editor_overlay=None):
+        """Initialising the loader
 
-        :param screen: На какую поверхность отрисовываться
+        :param screen: Which surface to draw on
         :type screen: SURFACE
-        :param from_editor_overlay: Показывает пришёл игрок из редактора или меню, defaults to None
+        :param from_editor_overlay: Shows whether the player came from the editor or the menu, defaults to None
         :type from_editor_overlay: EditorOverlay, optional
-        :param plug:
-            Параметр - затычка. Используется во избежание крашей
-            игры при входе из редактора (unused), defaults to None
-        :type plug: Any, optional
         """
         super().__init__(screen)
         self.overlay = from_editor_overlay
@@ -44,8 +40,7 @@ class Loader(GameStrategy):
             Button(settings.RESOLUTION[0] // 2 - int(600 * settings.WINDOW_SCALE),
                    settings.RESOLUTION[1] // 2 -
                    int(400 * settings.WINDOW_SCALE),
-                   int(1200 * settings.WINDOW_SCALE), int(50 *
-                                                          settings.WINDOW_SCALE), (0, 0, 0), GuiSettings(),
+                   int(1200 * settings.WINDOW_SCALE), int(50 * settings.WINDOW_SCALE), (0, 0, 0), GuiSettings(),
                    f"{language_manager['Back']}",
                    self.go_back),
         ]
@@ -55,33 +50,32 @@ class Loader(GameStrategy):
                        settings.RESOLUTION[1] // 2 -
                        int(350 * settings.WINDOW_SCALE)
                        + int(50 * index * settings.WINDOW_SCALE),
-                       int(1200 * settings.WINDOW_SCALE), int(50 *
-                                                              settings.WINDOW_SCALE), (0, 0, 0), GuiSettings(),
+                       int(1200 * settings.WINDOW_SCALE), int(50 * settings.WINDOW_SCALE), (0, 0, 0), GuiSettings(),
                        level,
                        partial(self.go_to_game if self.overlay is None else self.return_and_quit, level)),
             )
 
     def go_to_game(self, level_name: str):
         """
-        Осуществляет переход в игровую стратегию отрисовки матрицы.
+        Performs the transition to the game strategy of matrix rendering.
 
-        :param level_name: Название желаемого уровня
+        :param level_name: Name of the desired level
         :type level_name: str
         """
-        # Gospodin: Надеюсь, когда-нибудь это будет игрой.
+        # Danilado: I hope it will be a game someday.
         self._state = State(GameState.SWITCH, partial(PlayLevel, level_name, 'levels', True))
 
     def go_back(self):
-        """Простая отмена (выход в предыдущее меню)"""
+        """exit to previous menu"""
         self._state = State(GameState.BACK)
 
     def return_and_quit(self, level_name: str):
         """
-        Метод, использующийся для взаимодействия с редактором.
-        Парсит необходимый уровень из файла в матрицу и
-        передаёт её в редактор через его оверлей управления
+        Method used to interact with the editor.
+        Parses the required level from a file into a matrix and
+        passes it to the editor through its control overlay
 
-        :param level_name: Название желаемого уровня
+        :param level_name: Name of the desired level
         """
         self.overlay.loaded_flag = True
         pallete_name, level_size, self.overlay.editor.current_state = parse_file(
@@ -97,9 +91,9 @@ class Loader(GameStrategy):
     @staticmethod
     def find_levels() -> List[str]:
         """
-        Поиск уровней в папке levels
+        Search for levels in the levels folder
 
-        :return: Список с путями к уровням в виде строк
+        :return: List with paths to levels as strings
         """
         levels_arr: List[str] = []
         for entry in glob.glob("levels/*.omegapog_map_file_type_MLG_1337_228_100500_69_420"):
@@ -107,15 +101,14 @@ class Loader(GameStrategy):
         return levels_arr
 
     def draw(self, events: List[pygame.event.Event], delta_time_in_milliseconds: int) -> Optional[State]:
-        """Отрисовывает интерфейс загрузчика и обрабатывает все события
+        """Draws the loader interface and handles all events
 
-        :param events: События, собранные окном pygame
+        :param events: Events collected by the window
         :type events: List[pygame.event.Event]
-        :param delta_time_in_milliseconds: Время между нынешним и предыдущим кадром (unused)
+        :param delta_time_in_milliseconds: Time between the current frame and the previous frame (unused, sadly)
         :type delta_time_in_milliseconds: int
-        :return: Возвращает состояние для правильной работы game_context
+        :return: Returns the state for proper game_context operation
         """
-        self.screen.fill("black")
         self._state = None
 
         self.screen.fill("black")

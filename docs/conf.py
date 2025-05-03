@@ -6,27 +6,22 @@
 
 # -- Path setup --------------------------------------------------------------
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
 import os
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Baba is u limited Жaba edition with new level, textures, multiplayer, open-source, and best refactored code'
-copyright = '2022, Injirneers Team, Школа программистов, Подлегаев Эдмонд Бабкенович, Горбунов Константин Сергеевич, ' \
-            'Звягин Даниил Олегович, Бердников Николай Олегович, Соин Никита Максимович, Шаронов Кирилл ' \
-            'Станиславович, Новоселов Ярослав Вячеславович, Гадлевский Максим Денисович '
+project = 'Baba is u limited Jaba edition with new level, textures, multiplayer, open-source, and best refactored code'
 author = 'Injirneers Team, Подлегаев Эдмонд Бабкенович, Горбунов Константин Сергеевич, Звягин Даниил Олегович, ' \
-         'Бердников Николай Олегович, Соин Никита Максимович, Шаронов Кирилл Станиславович, Новоселов Ярослав ' \
-         'Вячеславович, Гадлевский Максим Денисович '
+         'Бердников Николай Олегович, Соин Никита Максимович, Шаронов Кирилл Станиславович, ' \
+         'Новоселов Ярослав Вячеславович, Гадлевский Максим Денисович'
+copyright = f'2022-2025. Школа программистов, {author}'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.2'
+release = Path('../VERSION').read_text(encoding='utf-8').strip()
 
 # -- General configuration ---------------------------------------------------
 
@@ -35,7 +30,8 @@ release = '0.0.2'
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx_autodoc_typehints"
+    "sphinx_autodoc_typehints",
+    "myst_parser"
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -46,7 +42,7 @@ templates_path = ['_templates']
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'ru'
+language = 'en'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

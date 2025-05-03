@@ -9,8 +9,6 @@ on:
       - 'requirements.txt'
       - '**.omegapog_map_file_type_MLG_1337_228_100500_69_420'
       - 'VERSION'
-  pull_request:
-    types: [opened]
 
 permissions:
   contents: write
@@ -20,7 +18,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04, windows-2022]
+        os: [ubuntu-22.04, windows-2022]
     runs-on: ${{matrix.os}}
     name: ${{matrix.os}} Build
     steps:

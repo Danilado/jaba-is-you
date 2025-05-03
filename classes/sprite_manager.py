@@ -10,7 +10,7 @@ from global_types import COLOR, SURFACE
 
 
 class SpriteManager(BaseDownloadManager):
-    """Класс необходимый для установки и кеширования спрайтов"""
+    """The class is necessary to set and cache sprites"""
     path = Path("./sprites/")
     url = "https://www.dropbox.com/s/t8h8esomwy2hjol/sprites10-03-22T19-59.zip?dl=1"
     default_colors = {'algae': (5, 2), 'arrow': (5, 2), 'baba': (0, 3), 'badbad': (2, 4), 'banana': (2, 4),
@@ -108,7 +108,7 @@ class SpriteManager(BaseDownloadManager):
 
     def _get_sprite_info(self, *args, **kwargs) -> SpriteInfo:
         def get_from_kwargs(kwarg_key: str, expected_types: Sequence[type]):
-            """Функция получения `keyword` из kwargs, вместе с проверкой типа"""
+            """Function to get `keyword` from kwargs, combined with type checking"""
             kwarg: Optional[Any] = kwargs.pop(kwarg_key, None)
             if kwarg is not None and not isinstance(kwarg, tuple(expected_types)):
                 raise TypeError(f"type of keyword `{kwarg_key}` is not "
@@ -117,8 +117,7 @@ class SpriteManager(BaseDownloadManager):
 
         default: Optional[bool] = get_from_kwargs("default", (bool,))
         palette: Optional[Palette] = get_from_kwargs("palette", (Palette,))
-        color: Optional[COLOR] = get_from_kwargs(
-            "color", (tuple, str, pygame.color.Color, pygame.Color))
+        color: Optional[COLOR] = get_from_kwargs("color", (tuple, str, pygame.color.Color, pygame.Color))
 
         sprite_info = SpriteInfo(*args, **kwargs)
 
@@ -135,36 +134,36 @@ class SpriteManager(BaseDownloadManager):
             sprite_name = "/".join(sprite_info.path.parts[1:-1])
             if sprite_name in self.default_colors.keys():
                 palette_pixel_position = self.default_colors[sprite_name]
-                sprite_info.color = palette.pixels[palette_pixel_position[1]
-                                                   ][palette_pixel_position[0]]
+                sprite_info.color = palette.pixels[palette_pixel_position[1]][palette_pixel_position[0]]
         return sprite_info
 
     def get(self, *args, **kwargs) -> SURFACE:
         """
-        Функция для получения спрайта из кэша. Если в кэше нет нужного спрайта, он загрузится и
-        сконвертируется используя параметр `alpha`.
+        Function for getting a sprite from the cache. If there is no required sprite in the cache, it will be loaded.
 
-        :keyword path: Путь до спрайта, например sprites/jaba/b00
-        :keyword size: Если этот параметр установлен, будет происходить сохранение в кэше изменённого спрайта
-        :keyword color: Цвет спрайта
-        :return: Загруженный спрайт через pygame.image.load
+        :keyword path: The path to the sprite, for example sprites/jaba/b00
+        :keyword size:
+            Sprite size. If this option is set, the modified sprite will be cached, and
+            you won't have to modify it every frame.
+        :keyword color: Sprite colour
+        :return: Returns the loaded sprite via pygame.image.load
         """
         while self.thread.is_alive() and not self.thread_done:
-            # Ждём пока скачаются и разархивируются спрайты
+            # Waiting for the sprites to download and unzip
             pygame.time.wait(100)
 
         sprite_info = self._get_sprite_info(*args, **kwargs)
 
-        if sprite_info not in self._sprites:  # Если нет в кеше
-            sprite = pygame.image.load(sprite_info.path)  # Загружаем спрайт
-            sprite = sprite.convert_alpha()  # Конвертируем с альфа каналом
+        if sprite_info not in self._sprites:  # If it's not in the cache
+            sprite = pygame.image.load(sprite_info.path)  # Loading sprite
+            sprite = sprite.convert_alpha()  # then converting it with alpha channel
             if sprite_info.size is not None:
-                sprite = pygame.transform.scale(sprite, sprite_info.size)  # Меняем размер
-            # Затем создаём цветную маску
+                sprite = pygame.transform.scale(sprite, sprite_info.size)  # Changing size
+            # Then creating colour mask
             color_mask = pygame.Surface(sprite.get_size())
-            color_mask.fill(sprite_info.color)  # И закрашиваем её цветом
+            color_mask.fill(sprite_info.color)  # And filling it with color
             sprite.blit(color_mask, (0, 0),
-                        special_flags=pygame.BLEND_MULT)  # Затем цветную маску накладываем на спрайт
-            self._sprites[sprite_info] = sprite  # И загружаем спрайт в кэш
+                        special_flags=pygame.BLEND_MULT)
+            self._sprites[sprite_info] = sprite  # And loading sprite into cache
 
-        return self._sprites[sprite_info]  # Возвращаем из кэша
+        return self._sprites[sprite_info]  # Returning from cache

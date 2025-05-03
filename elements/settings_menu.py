@@ -14,9 +14,6 @@ from utils import settings_saves
 
 
 class SettingsMenu(GameStrategy):
-    def music(self):
-        pass
-
     def __init__(self, screen: SURFACE):
         super().__init__(screen)
         self.flag_to_move_circle = False
@@ -35,36 +32,8 @@ class SettingsMenu(GameStrategy):
                              400 * settings.WINDOW_SCALE, 6 *
                              settings.WINDOW_SCALE, (255, 255, 255),
                              self.circle_music, 5, (80, 80, 80), self.set_music_volume)
-        self.buttons = [
-            Button(settings.RESOLUTION[0] // 2 - int(600 * settings.WINDOW_SCALE),
-                   settings.RESOLUTION[1] // 2 -
-                   int(180 * settings.WINDOW_SCALE),
-                   int(1200 * settings.WINDOW_SCALE), int(50 *
-                                                          settings.WINDOW_SCALE), (0, 0, 0),
-                   GuiSettings(), "Выключить сетку", self.set_show_grid),
-            Button(settings.RESOLUTION[0] // 2 - int(600 * settings.WINDOW_SCALE),
-                   settings.RESOLUTION[1] // 2 -
-                   int(120 * settings.WINDOW_SCALE),
-                   int(1200 * settings.WINDOW_SCALE), int(50 *
-                                                          settings.WINDOW_SCALE), (0, 0, 0),
-                   GuiSettings(), "Язык: Русский", self.set_language),
-            Button(settings.RESOLUTION[0] // 2 - int(600 * settings.WINDOW_SCALE), settings.RESOLUTION[1] // 2,
-                   int(1200 * settings.WINDOW_SCALE),
-                   int(50 * settings.WINDOW_SCALE), (0, 0, 0),
-                   GuiSettings(), "Назад", self.go_back),
-            Button(settings.RESOLUTION[0] // 2 - int(600 * settings.WINDOW_SCALE),
-                   settings.RESOLUTION[1] // 2 -
-                   int(60 * settings.WINDOW_SCALE),
-                   int(575 * settings.WINDOW_SCALE),
-                   int(50 * settings.WINDOW_SCALE), (0, 0, 0),
-                   GuiSettings(), "800x450", self.set_resolution_800x450),
-            Button(settings.RESOLUTION[0] // 2 + int(25 * settings.WINDOW_SCALE),
-                   settings.RESOLUTION[1] // 2 -
-                   int(60 * settings.WINDOW_SCALE),
-                   int(575 * settings.WINDOW_SCALE),
-                   int(50 * settings.WINDOW_SCALE), (0, 0, 0),
-                   GuiSettings(), "1600x900", self.set_resolution_1600x900),
-        ]
+        self.buttons: List[Optional[Button]] = [None,]*5
+        self.reset_buttons()
 
     def set_resolution_800x450(self):
         settings.WINDOW_SCALE = 0.5
@@ -109,7 +78,7 @@ class SettingsMenu(GameStrategy):
             file.close()
 
     def go_back(self):
-        """Простая отмена (выход в предыдущее меню)"""
+        """exit to previous menu"""
         self.save_file()
         self._state = State(GameState.BACK)
 
@@ -117,7 +86,7 @@ class SettingsMenu(GameStrategy):
         current_language_index = language_manager.available_languages.index(self.options[1])
 
         # Most likely this code can be shortened to `new_index = current_language_index + 1 % len(
-        # language_manager.available_languages)` but i can't make it work. :(
+        # language_manager.available_languages)` but I can't make it work. :(
         new_index = current_language_index + 1
         if new_index >= len(language_manager.available_languages):
             new_index = 0
@@ -142,7 +111,7 @@ class SettingsMenu(GameStrategy):
             (self.circle_music[0] - (settings.RESOLUTION[0] // 2 + 200 * settings.WINDOW_SCALE)) / 400)
         self.options[2] = pygame.mixer.music.get_volume()
 
-    def check_options(self):
+    def reset_buttons(self):
         grid_status = 'on' if self.options[0] else 'off'
         self.buttons[0] = Button(settings.RESOLUTION[0] // 2 - int(600 * settings.WINDOW_SCALE),
                                  settings.RESOLUTION[1] // 2 -
@@ -177,13 +146,13 @@ class SettingsMenu(GameStrategy):
                                  GuiSettings(), "1600x900", self.set_resolution_1600x900)
 
     def draw(self, events: List[pygame.event.Event], delta_time_in_milliseconds: int) -> Optional[State]:
-        """Отрисовывает интерфейс загрузчика и обрабатывает все события
+        """Draws the loader interface and handles all events
 
-        :param events: События, собранные окном pygame
+        :param events: Events collected by the window
         :type events: List[pygame.event.Event]
-        :param delta_time_in_milliseconds: Время между нынешним и предыдущим кадром (unused)
+        :param delta_time_in_milliseconds: Time between the current frame and the previous frame (unused)
         :type delta_time_in_milliseconds: int
-        :return: Возвращает состояние для правильной работы game_context
+        :return: Returns the state for proper game_context operation
         """
         self.screen.fill("black")
         self._state = None
@@ -203,7 +172,7 @@ class SettingsMenu(GameStrategy):
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self.save_file()
                     self._state = State(GameState.BACK)
-            self.check_options()
+            self.reset_buttons()
             self.slider.update(events)
             self.slider.draw(self.screen)
             for button in self.buttons:

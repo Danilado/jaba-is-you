@@ -82,7 +82,7 @@ class PaletteChoose(GameStrategy):
             button_row = [self._create_palette_button(palette, y_offset, x_offset, index % self.buttons_per_page)
                           for index, palette in enumerate(palette_list[i:i + self.buttons_per_page])]
 
-            # Кнопочка на предыдущую страницу
+            # Button to previous page
             button_row.append(
                 Button(
                     x=x_offset,
@@ -96,7 +96,7 @@ class PaletteChoose(GameStrategy):
                 )
             )
 
-            # Кнопочка на следующую страницу
+            # Button to next page
             button_row.append(
                 Button(
                     x=x_offset + round(self.palette_button_width / 2 - self.buttons_margin / 2) + self.buttons_margin,
@@ -157,14 +157,13 @@ class PaletteChoose(GameStrategy):
         game_object.moved = False
 
     def get_neighbours(self, y, x) -> List:
-        """Ищет соседей клетки сверху, справа, снизу и слева
+        """Looking for cell neighbours on top, right, bottom and left of the cell
 
-        :param y: координата на матрице по оси y идёт первым,
-        потому что ориентирование на матрице происходит зеркально относительно нормального
+        :param y: the y-axis coordinate on the matrix
         :type y: int
-        :param x: координата на матрице по оси x
+        :param x: the x-axis coordinate on the matrix
         :type x: int
-        :return: Массив с четырьмя клетками-соседями в порядке сверху, справа, снизу, слева
+        :return: Array with four neighbouring cells in the order top, right, bottom, left
         :rtype: List[]
         """
 

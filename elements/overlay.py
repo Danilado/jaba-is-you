@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 class EditorOverlay(GameStrategy):
     """
-    Оверлей управления редактором уровней
+    Level editor control overlay
     """
 
     def on_init(self):
@@ -29,10 +29,10 @@ class EditorOverlay(GameStrategy):
             print("QUIT KEYDOWN KEYUP MOUSEBUTTONUP")
 
     def __init__(self, editor: "Editor", screen: pygame.Surface):
-        """Инициализирует оверлей
+        """Initialises the overlay
 
-        :param screen: На какой поверхности отрисовывать
-        :param editor: Экземпляр класса Editor, который и управляет оверлей
+        :param screen: Which surface to draw on
+        :param editor: An instance of the Editor class, which manages the overlay
         """
         super().__init__(screen)
         self.state: Optional[State] = None
@@ -136,31 +136,29 @@ class EditorOverlay(GameStrategy):
         self.editor.define_border_and_scale()
 
     def save(self):
-        """Сохраняет матрицу редактора
+        """Saves the editor matrix
         """
         self.editor.safe_exit()
 
     def cancel(self):
-        """Отменяет вход в оверлей и возвращает к редактору
+        """Cancels entry to the overlay and returns to the editor
         """
         self.state = State(GameState.BACK)
 
     def load(self):
         """
-        Делает автоматическое сохранение изменений в редакторе, если они есть,
-        и вызывает загрузчик для загрузки уровня в редактор
+        Makes automatic saving changes to the editor, if any, and calls the loader to load the level into the editor
         """
         self.editor.extreme_exit()
-        self.state = State(GameState.SWITCH, partial(
-            Loader, self.screen, self))
+        self.state = State(GameState.SWITCH, partial(Loader, from_editor_overlay=self))
 
     def force_exit(self):
-        """Осуществляет выход из редактора с сохранением"""
+        """Exits the editor with saving"""
         self.state = State(GameState.BACK)
         self.editor.exit_flag = True
 
     def hard_force_exit(self):
-        """Осуществляет выход без сохранения"""
+        """Exits without saving"""
         self.state = State(GameState.BACK)
         self.editor.exit_flag = True
         self.editor.discard = True
@@ -170,13 +168,13 @@ class EditorOverlay(GameStrategy):
             PaletteChoose, self.editor))
 
     def draw(self, events: List[pygame.event.Event], delta_time_in_milliseconds: int) -> Optional[State]:
-        """Отрисовывает оверлей управления редактором и обрабатывает события
+        """Draws the editor control overlay and handles events
 
-        :param events: События, собранные окном pygame
+        :param events: Events collected by the window
         :type events: List[pygame.event.Event]
-        :param delta_time_in_milliseconds: Время между нынешним и предыдущим кадром (unused)
+        :param delta_time_in_milliseconds: Time between the current frame and the previous frame (unused, sadly)
         :type delta_time_in_milliseconds: int
-        :return: Возвращает состояние для правильной работы game_context
+        :return: state for proper game_context operation
         """
         self.state = State(GameState.BACK) if self.loaded_flag else None
         self.editor.new_loaded = bool(self.loaded_flag)

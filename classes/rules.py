@@ -501,7 +501,7 @@ class Color:
         "lime": (5, 3),
         "green": (5, 2),
         "cyan": (1, 4),
-        # Синего цвета нету в палитре, приходится импровизировать
+        # Blue isn't in the palette, so I have to improvise.
         "blue": (3, 3),
         "purple": (3, 1),
         "brown": (6, 1),
@@ -600,7 +600,7 @@ class Party:
         )
 
     def apply(self, *_, **kwargs):
-        # НЕ СМОТРИТЕ НА ЭТОТ МЕТОД!
+        # DON'T LOOK AT THIS METHOD!
 
         self.particle_helper.sprite_colors = [
             x for y in kwargs['level_processor'].current_palette.pixels for x in y]
@@ -689,8 +689,7 @@ class RuleProcessor:
         self.num_obj_3d = level_processor.num_obj_3d
         if changed:
             if DEBUG:
-                print(
-                    "PlayLevel was caught changing rules by RuleProcessor. New rules will be processed")
+                print("PlayLevel was caught changing rules by RuleProcessor. New rules will be processed")
             sprite_manager.default_colors = SpriteManager.default_colors.copy()
             for process in self.dictionary.values():
                 on_changed = getattr(process, "on_changed", None)
@@ -734,8 +733,7 @@ class RuleProcessor:
 
         except RecursionError:
             if DEBUG:
-                print(
-                    f'!!! RecursionError appeared somewhere in {text_rule.split()[-1]} rule')
+                print(f'!!! RecursionError appeared somewhere in {text_rule.split()[-1]} rule')
         return True
 
     def on_every_frame(self):

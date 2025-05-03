@@ -25,7 +25,7 @@ cpdef int map_value(double x, double in_min, double in_max, double out_min, doub
 
 class SmoothMove:
     """
-    Класс для плавного движения объекта и отделения математики от отрисовки
+    A class for smooth object movement and separating maths from rendering
     """
 
     def __init__(self, start_x_pixel: int, start_y_pixel: int, x_pixel_delta: int, y_pixel_delta: int,
@@ -57,9 +57,9 @@ class SmoothMove:
 
     def update_x_and_y(self) -> Tuple[int, int]:
         """
-        Обновление x и y объекта.
+        Update x and y of the object.
 
-        :returns: Кортеж с новыми x и y
+        :returns: Tuple with new x and y
         """
         elapsed_time = self.elapsed_seconds
         new_x = map_value(elapsed_time,

@@ -6,7 +6,7 @@ import pygame
 
 def get_pressed_direction(arrows: bool = False) -> \
         Literal[-1, 0, 1, 2, 3]:
-    """Метод обработки клавиш поворота чего-либо"""
+    """Function for handling the rotation keys of something"""
     side_and_key: Dict[int, Literal[0, 1, 2, 3]]
     if arrows:
         side_and_key = {

@@ -10,26 +10,25 @@ if TYPE_CHECKING:
 
 
 class Input:
-    """Поле ввода текста"""
+    """Text input field"""
 
     def __init__(self, x: int, y: int, width: int, height: int, outline: "COLOR",
                  text_settings: "AbstractButtonSettings", placeholder: str = ""):
-        """Инициализация поля ввода
+        """Input field initialisation
 
-        :param x: Положение поля на экране по оси x
+        :param x: Field position on the screen in the x-axis
         :type x: int
-        :param y: Положение поля на экране по оси y
+        :param y: Field position on the screen in the y-axis
         :type y: int
-        :param width: Ширина поля ввода
+        :param width: Input field width
         :type width: int
-        :param height: Высота поля ввода
+        :param height: Input field height
         :type height: int
-        :param outline: Цвет обводки поля
+        :param outline: Field outline colour
         :type outline: COLOR
-        :param text_settings: Настройки отрисовки и оформления поля ввода
+        :param text_settings: Input field rendering and design settings
         :type text_settings: AbstractButtonSettings
-        :param placeholder:
-            Содержимое поля ввода до ввода со стороны игрока, defaults to empty string
+        :param placeholder: Contents of input field before player input, defaults to empty string
         :type placeholder: str, optional
         """
         self.x = x
@@ -37,20 +36,21 @@ class Input:
         self.width = width
         self.height = height
         self.text = ''
-        # Это слово пишется слитно, здесь не нужны подчёркивания
         self.placeholder = placeholder
         self.text_settings = text_settings
         self.outline = outline
         self.font = pygame.font.Font(
-            "fonts/ConsolateElf.ttf", int(self.text_settings.text_size * settings.WINDOW_SCALE))
+            "fonts/ConsolateElf.ttf",
+            int(self.text_settings.text_size * settings.WINDOW_SCALE)
+        )
         self.focused = False
         self.pressed = False
 
     def draw(self, screen: "SURFACE"):
         """
-        Метод отрисовки поля
+        Field rendering method
 
-        :param screen: Поверхность, на которой будет происходить отрисовка
+        :param screen: Surface to draw on
         """
         if self.outline:
             pygame.draw.rect(screen, self.outline, (self.x - 2,
@@ -85,10 +85,10 @@ class Input:
 
     def update(self, events: List[pygame.event.Event]) -> bool:
         """
-        Метод проверки нажатия.
+        Press check method.
 
-        :param events: Список событий полученных путём вызова pygame.event.get()
-        :return: В случае если был вызван action, True, иначе False
+        :param events: List of events received by calling pygame.event.get()
+        :return: If action was called, True, otherwise False
         """
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -104,11 +104,11 @@ class Input:
 
     def is_over(self, pos: Sequence[Union[int, float]]) -> bool:
         """
-        Проверка координат на нахождение внутри области кнопки
+        Coordinates check for being inside the button area
 
-        :param pos: Абсцисса и Ордината для проверки наведения
+        :param pos: Abscissa and Ordinate to check pointing
 
-        :return: True, если Абсцисса и Ордината находится в области кнопки, иначе False.
+        :return: True if the Abscissa and Ordinate are in the text input area, otherwise False.
         """
         if self.x < pos[0] < self.x + self.width:
             if self.y < pos[1] < self.y + self.height:

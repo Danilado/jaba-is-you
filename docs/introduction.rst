@@ -1,19 +1,12 @@
-########
-Введение
-########
-Jaba is you - это видеоигра написанная на Python 3.8+ использующая библиотеку pygame
+Readme File
+===========
 
-***********
-Зависимости
-***********
+README.md
+----------
+.. include:: ../README.md
+    :parser: myst_parser.sphinx_
 
-Зависимости находятся в файле requirements.txt в корне репозитория, и выглядят так:
-
-.. include:: ../requirements.txt
-   :literal:
-
-Установка
-=========
-Для установки зависимостей необходимо использовать ключ `-r` для системы управления пакетов `pip`, вот так:
-
-`pip install -r requirements.txt`
+README-ru.md
+------------
+.. include:: ../README-ru.md
+    :parser: myst_parser.sphinx_

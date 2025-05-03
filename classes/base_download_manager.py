@@ -10,7 +10,7 @@ import httpx
 
 class BaseDownloadManager(abc.ABC):
     def __thread_work(self):
-        """Функция другого потока для скачивания и разархивации чего-либо"""
+        """Function of another thread for downloading and unzipping something"""
         with httpx.Client(http2=True, http1=False) as client:
             with client.stream("GET",
                                self.url,
@@ -28,13 +28,13 @@ class BaseDownloadManager(abc.ABC):
     @property
     @abc.abstractmethod
     def path(self) -> Path:
-        """Путь в котором будет храниться что-либо. Например `sprites/` или `sounds/`"""
+        """The path where something will be stored. For example `sprites/` or `sounds/`"""
         ...
 
     @property
     @abc.abstractmethod
     def url(self) -> str:
-        """Direct-Ссылка на zip-архив который будет разархивироваться в :attr:`~BaseDownloadManager.path`"""
+        """Direct-Link to the zip-archive that will be unzipped to the :attr:`~BaseDownloadManager.path`"""
         ...
 
     @property
@@ -56,7 +56,7 @@ class BaseDownloadManager(abc.ABC):
         self._thread_done: bool = False
 
     def start_download(self):
-        """Старт скачивания чего-либо"""
+        """Start a download"""
         if not self.path.exists() or not set(self.path.glob("*")):
             self.path.mkdir(exist_ok=True)
             self.thread.start()

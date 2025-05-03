@@ -1,4 +1,4 @@
-"""Модуль класса партикла"""
+"""Particle class module"""
 import os
 from math import sin, cos
 from random import randint, uniform
@@ -14,28 +14,28 @@ FADE_OUT_DURATION = int(FPS/3)
 
 
 class ParticleStrategy:
-    """Класс стратегии движения партикла"""
+    """Particle motion strategy class"""
 
     def __init__(self, x_dimensions: Optional[Tuple[int, int]] = None, y_dimensions: Optional[Tuple[int, int]] = None,
                  size: Optional[Tuple[int, int]] = None, rotation: Optional[Tuple[int, int]] = None, wobble: int = 0,
                  duration: Optional[float] = None, loop: bool = False, randomize_start_values: bool = False):
-        """Инициализация стратегии партикла
+        """Initialisation of the particle strategy
 
-        :param x_dimensions: координаты x начала и конца движения партикла, defaults to None
+        :param x_dimensions: x-coordinates of the beginning and end of the particle motion, defaults to None
         :type x_dimensions: Tuple[int, int], optional
-        :param y_dimensions: координаты y начала и конца движения партикла, defaults to None
+        :param y_dimensions: y-coordinates of the beginning and end of the particle motion, defaults to None
         :type y_dimensions: Tuple[int, int], optional
-        :param size: размер партикла, defaults to None
+        :param size: Particle size, defaults to None
         :type size: Tuple[int, int], optional
-        :param rotation: угол поворота спрайта партикла в начале и конце движения, defaults to None
+        :param rotation: rotation angle of the particle sprite at the beginning and end of the motion, defaults to None
         :type rotation: Tuple[int, int], optional
-        :param wobble: кол-во пикселей смещения партикла в процессе движение, defaults to 0
+        :param wobble: particle displacement in pixels during motion, defaults to 0
         :type wobble: int, optional
-        :param duration: Длина анимации в секундах, defaults to None
+        :param duration: Animation length in seconds, defaults to None
         :type duration: int, optional
-        :param loop: зациклена ли анимация, defaults to False
+        :param loop: is animation looped, defaults to False
         :type loop: bool, optional
-        :param randomize_start_values: рандомизирует стартовые значения в пределах введённых, defaults to False
+        :param randomize_start_values: Should initial values be randomised within the entered values, defaults to False
         :type randomize_start_values: bool, optional
         """
         try:
@@ -76,14 +76,14 @@ class ParticleStrategy:
             self.start_timestamp = pygame.time.get_ticks()
         except IndexError:
             if DEBUG:
-                print('IndexError в партиклах, ёпта. Что-то не ладно.')
+                print("IndexError in particles, for fuck's sake. Something's not right")
                 print(x_dimensions, y_dimensions, rotation, duration, loop)
-                print('^ В создание стратегии партикла переданы неправильные аргументы ^')
+                print('^ Incorrect arguments are passed in the initialisation of the particle strategy ^')
         except TypeError:
             if DEBUG:
-                print('TypeError в партиклах, ёпта. Что-то не ладно.')
+                print("TypeError in particles, for fuck's sake. Something's not right")
                 print(x_dimensions, y_dimensions, rotation, duration, loop)
-                print('^ В создание стратегии партикла переданы неправильные аргументы ^')
+                print('^ Incorrect arguments are passed in the initialisation of the particle strategy ^')
 
     def update_values(self):
         timestamp = pygame.time.get_ticks()

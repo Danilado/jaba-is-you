@@ -7,7 +7,7 @@ from global_types import COLOR
 
 @dataclass(unsafe_hash=True)
 class SpriteInfo:
-    """Необходим для грамотного хранения спрайтов в кэше"""
+    """Necessary for proper storage of sprites in the cache"""
     path: Union[Path, str]
     size: Optional[Tuple[int, int]] = None   #: None for default
     color: COLOR = (255, 255, 255)

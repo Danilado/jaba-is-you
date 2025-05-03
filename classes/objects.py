@@ -1,4 +1,4 @@
-"""Модуль класса объекта"""
+"""Object class module"""
 import os
 import os.path
 from copy import copy
@@ -16,61 +16,55 @@ from global_types import SURFACE
 from settings import DEBUG, TEXT_ONLY, SPRITE_ONLY, NOUNS, OPERATORS, PROPERTIES
 from utils import get_pressed_direction
 
-pygame.font.init()
-font = pygame.font.Font("fonts/ConsolateElf.ttf", 15)
 
 
 # TODO by quswadress
 # Too many fields, refactor this please!
 
-# Gospodin:
-# Отнюдь. Слишком во многих файлах объекты и их поля
-# вызываются без определения переменной как Object
-# в циклых это вообще сделать, наверное, невозможно.
-# Это значит, что
-# Во первых, изменится половина кода
-# Во вторых, придётся искать все упоминания объектов вручную
-# В третьих, сами структуры выглядят по уродски, а иначе нужно
-# Создавать классы, которые трудно сериализировать
+# Danilado:
+# Not at all. In too many files, objects and their fields are called without defining the variable as Object in loops
+# it is probably impossible to do it at all. This means that
+# firstly, half of the code will change
+# Secondly, you will have to search for all references to objects manually
+# Thirdly, the structures themselves look ugly, otherwise you should create classes that are difficult to serialise.
 # quswadress:
-# #define MNE_LEN_REFAKTORIT "Это просто оправдание лени refactor-ть это."
-# 1) Изменится половина кода? И что с того? MNE_LEN_REFACTORIT
-# 2) MNE_LEN_REFACTORIT
-# 3) Не спорю. Но если структуры могут работать с своими данными(то есть имеют какие-нибудь методы) то нет \
-#       (именно поэтому есть параметр min-public-methods в pylint-е). Как пример можно привести структуру Palette.
-# 4) Про часть с сериализацией, я не понял. А в чём собственно трудность? Если ты про /
-#       большую связность классов друг с другом, то не думаю что это является серьёзной трудностью, просто /
-#       сделай метод `serialize_this_shit` который будет принимать в себя все эти классы и возвращать байты, и всё.
+# #define IamTooLazyToRefactorThis "It's just an excuse for being too lazy to refactor it."
+# 1) Half the code will change? So what? IamTooLazyToRefactorThis
+# 2) IamTooLazyToRefactorThis
+# 3) No argument. But if structures can work with their own data (i.e. have some methods) then no
+#    (that's why there is a min-public-methods parameter in pylint). The Palette structure is an example.
+# 4) The serialisation part, I don't get it. What's the actual difficulty? If you're talking about the large connection
+#   of classes with each other, I don't think it's a serious difficulty, just make a method `serialize_this_shit` that
+#   will take in all these classes and return bytes, and that's it.
 
 class Object:
     """
-    Объект правил, например, jaba, you, is, and, и т.д
+    Rule object, e.g. Jaba, you, is, and, etc.
 
-    :ivar x: Позиция объекта на **сетке** уровня по оси х
-    :ivar y: Позиция объекта на **сетке** уровня по оси y
-    :ivar xpx: Абсцисса объекта на **экране** по оси х
-    :ivar ypx: Ордината объекта на **экране** по оси y
+    :ivar x: Position of the object on the level **grid** along the x-axis
+    :ivar y: Position of the object on the level **grid** along the y-axis
+    :ivar xpx: Abscissa of the object on the **screen**
+    :ivar ypx: Ordinate of the object on the **screen**
 
     :ivar direction:
-        Направление, в которое смотрит объект во время создания. Может принимать следующие значения:
-        0 - Вверх
-        1 - Вправо
-        2 - Вниз
-        3 - Влево
-        Используется с правилами move, turn,
-        shift и т.д.
+        The direction the object is facing at creation time. Can take the following values:
+        0 - Up
+        1 - Right
+        2 - Down
+        3 - Left
+        Used with rules move, turn, shift et cetera.
 
-    :ivar name: Название объекта
-    :ivar is_text: Переменная определяющая является объект текстом, или нет
+    :ivar name: Object name
+    :ivar is_text: Field defining whether the object is text or not
 
-    :ivar width: Ширина спрайта
-    :ivar height: Высота спрайта
+    :ivar width: Sprite width
+    :ivar height: Sprite height
 
-    :ivar animation: Анимация объекта
+    :ivar animation: Object animation
     """
 
     def __init__(self, x: int, y: int, direction: int = 0, name: str = "empty",
-                 is_text: bool = True, palette: Palette = palette_manager.get_palette("default"),
+                 is_text: bool = True, palette: Optional[Palette] = None,
                  movement_state: int = 0, neighbours=None,
                  turning_side: Literal[0, 1, 2, 3, -1] = -1, animation=None,
                  safe=False, angle_3d: int = 90, is_3d=False, moved=False,
@@ -110,6 +104,9 @@ class Object:
         self.animation: Animation
         self.movement_state = movement_state
         self.animation = animation
+
+        if palette is None:
+            palette = palette_manager.get_palette("default")
         self.palette: Palette = palette
 
         self.is_hide = False
@@ -188,9 +185,9 @@ class Object:
         self._y = int(value / 50)
 
     def investigate_neighbours(self):
-        """Исследует соседей объекта и возвращает правильный ключ к спрайту
+        """Investigates the neighbours of the object and returns the correct key to the sprite
 
-        :return: Ключ для правильного выбора спрайтов и анимации
+        :return: The key to choosing the right sprites and animations
         :rtype: int
         """
         key_dict = {
@@ -221,9 +218,7 @@ class Object:
         return key_dict[key]
 
     def animation_init(self) -> Animation:
-        """Инициализирует анимацию объекта, основываясь на его имени,
-           "Текстовом состоянии", направлении, стадии движения и т.д.
-        """
+        """Initialises an object's animation based on its name, "text state", direction, stage of motion, etc."""
         animation = Animation([], 200, (self.xpx, self.ypx))
         if (self.is_text or self.name in TEXT_ONLY) and self.name not in SPRITE_ONLY:
             path = os.path.join('./', 'sprites', 'text')
@@ -304,16 +299,15 @@ class Object:
 
     def _draw_debug(self, screen: SURFACE, matrix: List[List[List["Object"]]]):
         """
-        Подсвечивает объект цветами для дебага Кости.
+        Illuminates the object with colours for quswadress debug.
 
-        .. Циановый::
-            Конец движения, то-есть куда объект двигается
+        .. Cyan::
+            The end of the motion, i.e. where the object is moving to.
 
-        .. Пурпурный::
-            Начало движения, то-есть откуда объект двигается
+        .. Magenta:: Start of motion, i.e. where the object is moving from
 
-        .. Оранжевый::
-            Положение объекта на матрице. Если он не находится на объекте - значит что-то пошло не так.
+        .. Orange::
+            The position of the object on the matrix. If it is not on the object, then something has gone wrong.
         """
         if not self.movement.done:
             surface = pygame.Surface((50, 50))
@@ -349,9 +343,7 @@ class Object:
                         special_flags=pygame.BLEND_RGBA_ADD)
 
     def draw(self, screen: SURFACE, matrix: Optional[List[List[List["Object"]]]] = None):
-        """
-        Метод отрисовки объекта
-        """
+        """Method of object drawing"""
         if matrix is None:
             matrix = []
         new_x_and_y = self._movement.update_x_and_y()
@@ -363,16 +355,16 @@ class Object:
             self._draw_debug(screen, matrix)
 
     def unparse(self) -> str:
-        """Сериализовать объект в строку"""
+        """Serialise an object into a string"""
         return f'{self.x} {self.y} {self.direction} {self.name} {self.is_text}'
 
     def get_index(self, matrix) -> int:
-        """Ищет индекс объекта в клетке матрицы для удаления
-        (костыль от Vlastelin)
+        """Searches the index of the object in the matrix cell to be deleted
+        (Workaround by epsinenta)
 
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :return: Индекс объекта в клетке массива
+        :return: Index of the object in the array cell
         :rtype: int
         """
         for i in range(len(matrix[self.y][self.x])):
@@ -381,14 +373,13 @@ class Object:
         return -1
 
     def move(self, matrix, level_rules, level_processor) -> None:
-        """Выбор метода движения (2Д или 3Д)
+        """Selecting the motion method (2D or 3D)
 
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]_
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param level_processor: Объект класса игры, в котором
-        движется объект
+        :param level_processor: The object of the game class in which the object moves.
         :type level_processor: PlayLevel
         """
         if self.is_3d:
@@ -397,14 +388,13 @@ class Object:
             self.move_2d(matrix, level_rules, level_processor)
 
     def move_2d(self, matrix, level_rules, level_processor) -> None:
-        """Метод движения объекта в 2Д
+        """Method of object movement in 2D
 
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param level_processor: Объект класса игры, в котором
-        движется объект
+        :param level_processor: The object of the game class in which the object moves.
         :type level_processor: PlayLevel"""
         self.level_processor = level_processor
 
@@ -422,14 +412,13 @@ class Object:
             self.direction = 2
 
     def move_3d(self, matrix, level_rules, level_processor) -> None:
-        """Метод движения объекта в 3Д
+        """Method of object movement in 3D
 
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param level_processor: Объект класса игры, в котором
-        движется объект
+        :param level_processor: The object of the game class in which the object moves.
         :type level_processor: PlayLevel
         """
         self.level_processor = level_processor
@@ -459,13 +448,13 @@ class Object:
 
     @staticmethod
     def find_side(delta_x, delta_y) -> Optional[str]:
-        """Поиск направления движения
+        """Search for direction of movement
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :return: Сторона движения
+        :return: Movement side
         """
         side = None
         if delta_y > 0:
@@ -479,13 +468,13 @@ class Object:
         return side
 
     def update_parameters(self, delta_x, delta_y, matrix):
-        """Обновление параметров объекта
+        """Object parameters update
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
         """
         self._movement.start_x_pixel = self._xpx
@@ -515,30 +504,26 @@ class Object:
         self._movement.rerun(0.05)
 
     def check_swap(self, delta_x, delta_y, matrix, level_rules, rule_object) -> bool:
-        """Проверяет правило swap у объекта и сразу
-        выполняет действие, если возможно
+        """Checks the swap rule of the object and immediately performs the action if possible
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может свапаться
+        :param rule_object: An object with which a moving object could potentially swap
         :type rule_object: Object
-        :return: неизвестную фигню
+        :return: True if the object survived otherwise False
         :rtype: bool
         """
         for rule in level_rules:
             if ((not rule_object.is_text and f'{rule_object.name} is swap' in rule.text_rule)
                     or (f'{self.name} is swap' in rule.text_rule and not self.is_phantom) or
-                    (f'text is swap' in rule.text_rule and (rule_object.name in TEXT_ONLY
-                                                            or rule_object.is_text))
-                    or (f'text is swap' in rule.text_rule and (self.name in TEXT_ONLY
-                                                               or self.is_text)))\
+                    ('text is swap' in rule.text_rule and (rule_object.name in TEXT_ONLY or rule_object.is_text))
+                    or ('text is swap' in rule.text_rule and (self.name in TEXT_ONLY or self.is_text))) \
                     and rule.check_fix(self, matrix, level_rules):
                 matrix[self.y][self.x].pop(self.get_index(matrix))
                 self.update_parameters(delta_x, delta_y, matrix)
@@ -548,21 +533,19 @@ class Object:
         return False
 
     def check_melt(self, delta_x, delta_y, matrix, level_rules, rule_object) -> bool:
-        """Проверяет правило melt у объекта и сразу
-        выполняет действие, если возможно
+        """Checks the melt rule of the object and immediately performs the action if possible
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: True если объект выжил иначе False
+        :return: True if the object survived otherwise False
         :rtype: bool
         """
         if self.can_interact(rule_object, level_rules):
@@ -589,21 +572,19 @@ class Object:
             return True
 
     def check_weak(self, delta_x, delta_y, matrix, level_rules, rule_object) -> bool:
-        """Проверяет правило weak у объекта и сразу
-        выполняет действие, если возможно
+        """Checks the weak rule of the object and immediately performs the action if possible
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: True если объект выжил иначе False
+        :return: True if the object survived otherwise False
         :rtype: bool
         """
         if self.can_interact(rule_object, level_rules):
@@ -624,21 +605,19 @@ class Object:
             return True
 
     def check_shut_open(self, delta_x, delta_y, matrix, level_rules, rule_object) -> bool:
-        """Проверяет правилa shut и open у объекта и сразу
-        выполняет действие, если возможно
+        """Checks the shut and open rule of the object and immediately performs the action if possible
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: True если объект выжил иначе False
+        :return: True if the object survived otherwise False
         :rtype: bool
         """
         if self.can_interact(rule_object, level_rules):
@@ -682,21 +661,19 @@ class Object:
             matrix[self.y + delta_i][self.x + delta_j].append(new_object)
 
     def check_defeat(self, delta_x, delta_y, matrix, level_rules, rule_object) -> bool:
-        """Проверяет правило defeat у объекта и сразу
-        выполняет действие, если возможно
+        """Checks the defeat rule of the object and immediately performs the action if possible
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: True если объект выжил иначе False
+        :return: True if the object survived otherwise False
         :rtype: bool
         """
         if self.can_interact(rule_object, level_rules):
@@ -704,8 +681,9 @@ class Object:
                 if not self.is_safe:
                     for rule in level_rules:
                         if ((not rule_object.is_text and f'{rule_object.name} is defeat' in rule.text_rule) or
-                                (f'text is defeat' in rule.text_rule and (rule_object.name in TEXT_ONLY
-                                                                          or rule_object.name in NOUNS and rule_object.is_text))) \
+                                ('text is defeat' in rule.text_rule and (rule_object.name in TEXT_ONLY
+                                                                         or rule_object.name in NOUNS
+                                                                         and rule_object.is_text))) \
                                 and rule.check_fix(rule_object, matrix, level_rules):
                             for sec_rule in level_rules:
                                 if f'{self.name} is you' in sec_rule.text_rule \
@@ -725,8 +703,9 @@ class Object:
                             and rule.check_fix(self, matrix, level_rules):
                         for sec_rule in level_rules:
                             if (not rule_object.is_text and f'{rule_object.name} is you' in sec_rule.text_rule) or\
-                                    (f'text is you' in rule.text_rule and (rule_object.name in TEXT_ONLY
-                                                                           or rule_object.name in NOUNS and rule_object.is_text)) \
+                                    ('text is you' in rule.text_rule and (rule_object.name in TEXT_ONLY
+                                                                          or rule_object.name in NOUNS
+                                                                          and rule_object.is_text)) \
                                     and sec_rule.check_fix(rule_object, matrix, level_rules):
                                 matrix[self.y + delta_y][self.x +
                                                          delta_x].pop(rule_object.get_index(matrix))
@@ -737,21 +716,19 @@ class Object:
             return True
 
     def check_sink(self, delta_x, delta_y, matrix, level_rules, rule_object) -> bool:
-        """Проверяет правило sink у объекта и сразу
-        выполняет действие, если возможно
+        """Checks the sink rule of the object and immediately performs the action if possible
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: True если объект выжил иначе False
+        :return: True if the object survived otherwise False
         :rtype: bool
         """
         if self.can_interact(rule_object, level_rules):
@@ -759,7 +736,7 @@ class Object:
                 if not self.is_safe:
                     for rule in level_rules:
                         if ((f'{rule_object.name} is sink' in rule.text_rule and not rule_object.is_text) or
-                            (f'text is sink' in rule.text_rule and (rule_object.name in TEXT_ONLY
+                            ('text is sink' in rule.text_rule and (rule_object.name in TEXT_ONLY
                                                                     or rule_object.name in NOUNS and rule_object.is_text))) \
                                 and rule.check_fix(rule_object, matrix, level_rules):
                             matrix[self.y][self.x].pop(self.get_index(matrix))
@@ -768,7 +745,7 @@ class Object:
                             return False
                 for rule in level_rules:
                     if ((f'{self.name} is sink' in rule.text_rule and not self.is_text) or
-                            (f'text is sink' in rule.text_rule and (self.name in TEXT_ONLY
+                            ('text is sink' in rule.text_rule and (self.name in TEXT_ONLY
                                                                     or self.name in NOUNS and self.is_text)))\
                             and rule.check_fix(self, matrix, level_rules):
                         matrix[self.y + delta_y][self.x +
@@ -776,34 +753,32 @@ class Object:
             return True
 
     def check_win(self, level_rules, rule_object, matrix) -> bool:
-        """Проверяет правило win у объекта и сразу
-        выполняет действие, если возможно. В случае победы
-        возвращает игрока в предыдущее меню.
+        """Checks the win rule of the object and immediately performs the action if possible. In case of victory
+        returns the player to the previous menu.
 
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: True если победа достигнута иначе False
+        :return: True if victory is achieved otherwise False
         :rtype: bool
         """
         if self.can_interact(rule_object, level_rules):
             if not self.object_can_stop(rule_object, level_rules, matrix, True):
                 for rule in level_rules:
                     if ((f'{rule_object.name} is win' in rule.text_rule and not rule_object.is_text) or
-                        (f'text is win' in rule.text_rule and (rule_object.name in TEXT_ONLY
-                                                               or rule_object.name in NOUNS and rule_object.is_text))) \
+                        ('text is win' in rule.text_rule and (rule_object.name in TEXT_ONLY
+                                                              or rule_object.name in NOUNS and rule_object.is_text))) \
                             and rule.check_fix(rule_object, matrix, level_rules):
                         for sec_rule in level_rules:
 
                             if ((f'{self.name} is you' in sec_rule.text_rule and not self.is_text) or
-                                    (f'text is you' in sec_rule.text_rule and (self.name in TEXT_ONLY
-                                                                               or self.name in NOUNS and self.is_text))) \
+                                    ('text is you' in sec_rule.text_rule and (self.name in TEXT_ONLY
+                                                                              or self.name in NOUNS and self.is_text))) \
                                     and rule.check_fix(self, matrix, level_rules) or \
                                 ((f'{self.name} is 3d' in sec_rule.text_rule and not self.is_text) or
-                                 (f'text is 3d' in sec_rule.text_rule and (self.name in TEXT_ONLY
-                                                                           or self.name in NOUNS and self.is_text))) \
+                                 ('text is 3d' in sec_rule.text_rule and (self.name in TEXT_ONLY
+                                                                          or self.name in NOUNS and self.is_text))) \
                                     and rule.check_fix(self, matrix, level_rules):
                                 if not self.level_processor.flag_to_win_animation \
                                         and not self.level_processor.flag_to_level_start_animation:
@@ -811,21 +786,20 @@ class Object:
             return False
 
     def check_rules(self, delta_x, delta_y, matrix, level_rules, rule_object) -> Literal[True]:
-        """Проверяет все правила, действующие на объект
-        И меняет его статус в зависимости от них
+        """Checks all the rules that apply to the object.
+        And changes its status based on them.
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: True "Так нужно" (c)Vlastelin
+        :return: True "That's the way it should be." (c)Vlastelin
         :rtype: bool
         """
         self.status = 'alive'
@@ -845,23 +819,22 @@ class Object:
         return True
 
     def object_can_stop(self, rule_object, level_rules, matrix, with_push=False) -> bool:
-        """Проверяет требуется ли обработка коллизий с объектом
+        """Checks whether collision handling is required with the object
 
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :param with_push: Пытаются ли толкнуть объект
+        :param with_push: Is trying to push the object
         :type with_push: bool
-        :return: True если объект обрабатывает коллизии иначе False
+        :return: True if the object handles collisions otherwise False
         :rtype: bool
         """
         status = False
         for rule in level_rules:
             if (f'{rule_object.name} is stop' in rule.text_rule and not rule_object.is_text
                 or f'{rule_object.name} is pull' in rule.text_rule and not rule_object.is_text
-                or (f'text is pull' in rule.text_rule and (rule_object.name in TEXT_ONLY or rule_object.is_text))) \
+                or ('text is pull' in rule.text_rule and (rule_object.name in TEXT_ONLY or rule_object.is_text))) \
                     and self.can_interact(rule_object, level_rules) and rule.check_fix(rule_object, matrix, level_rules):
                 status = True
             if with_push:
@@ -874,12 +847,12 @@ class Object:
         return status
 
     def object_can_move(self, level_rules) -> bool:
-        """Проверяет может ли звигаться объект в зависимости от правил
-        !!! Такая интерпритация быстрее проверки через лист
+        """Checks if the object can move depending on the rules
+        !!! This interpretation is faster than checking through a list
 
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :return: Может ли двигаться объект
+        :return: whether the object can move
         :rtype: bool
         """
         status = False
@@ -903,29 +876,29 @@ class Object:
         return status
 
     def check_valid_range(self, delta_x, delta_y) -> bool:
-        """Проверяет выход за границы матрицы
-        в процессе движения
+        """Checks if the matrix is out of bounds
+        during movement
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :return: Можно ли двигаться в данном направлении
+        :return: whether it is possible to move in the given direction
         :rtype: bool
         """
         return self.level_size[0] - 1 >= self.x + delta_x >= 0 \
             and self.level_size[1] - 1 >= self.y + delta_y >= 0
 
     def pull_objects(self, delta_x, delta_y, matrix, level_rules) -> None:
-        """Тянет объекты с правилом pull
+        """Pulls objects with a pull rule
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
         """
         if self.check_valid_range(-delta_x, -delta_y):
@@ -933,21 +906,20 @@ class Object:
                 if not rule_object.is_text and rule_object.name in NOUNS:
                     for rule in level_rules:
                         if (f'{rule_object.name} is pull' in rule.text_rule
-                            or (f'text is pull' in rule.text_rule and (rule_object.name in TEXT_ONLY or rule_object.is_text))) \
+                            or ('text is pull' in rule.text_rule and (rule_object.name in TEXT_ONLY
+                                                                      or rule_object.is_text))) \
                                 and rule.check_fix(rule_object, matrix, level_rules):
                             rule_object.motion(
                                 delta_x, delta_y, matrix, level_rules, 'pull')
 
     def check_locked(self, delta_x, delta_y) -> bool:
-        """Блокирует стороны для движения в случае
-        выхода за границы матрицы этим движением
+        """Blocks the sides for movement in case of out of the matrix boundaries by this movement
 
-        :param delta_x: Сдвиг объекта по оси x
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :return: Можно ли двигаться объекту в
-        сторону его нынешнего движения
+        :return: Whether an object can move in the direction of its current movement
         :rtype: bool
         """
         side = self.find_side(delta_x, delta_y)
@@ -964,15 +936,14 @@ class Object:
         return True
 
     def can_interact(self, rule_object, level_rules, status_push=False) -> bool:
-        """Можно ли взаимодействовать с объектом
-        (проверка на правило float)
+        """Is it possible to interact with an object
+        (check for float rule)
 
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param rule_object: Объект, с которым движущийся объект
-        потенциально может взаимодействовать
+        :param rule_object: An object with which a moving object could potentially interact
         :type rule_object: Object
-        :return: Может ли движущийся объект взаимодействовать с данным
+        :return: whether the moving object can interact with this object
         :rtype: bool
         """
         status_float_rule_object = False
@@ -980,18 +951,18 @@ class Object:
         self.is_float = False
         for rule in level_rules:
             if (f'{rule_object.name} is float' == rule.text_rule and not rule_object.is_text) or \
-                (f'text is float' == rule.text_rule and (rule_object.name in TEXT_ONLY
-                                                         or rule_object.is_text)):
+                ('text is float' == rule.text_rule and (rule_object.name in TEXT_ONLY
+                                                        or rule_object.is_text)):
                 status_float_rule_object = True
             if status_push:
                 if (f'{rule_object.name} is push' in rule.text_rule
-                        and not ((rule_object.name in TEXT_ONLY
-                                  or rule_object.name in NOUNS and rule_object.is_text))) \
+                        and not (rule_object.name in TEXT_ONLY
+                                 or rule_object.name in NOUNS and rule_object.is_text)) \
                         or (rule_object.name in TEXT_ONLY or rule_object.is_text):
                     status_push_rule_object = True
             if (f'{self.name} is float' == rule.text_rule and not self.is_text) or \
-                (f'text is float' == rule.text_rule and (self.name in TEXT_ONLY
-                                                         or self.is_text)):
+                ('text is float' == rule.text_rule and (self.name in TEXT_ONLY
+                                                        or self.is_text)):
                 self.is_float = True
         if self.is_float == status_float_rule_object \
                 or status_push_rule_object:
@@ -999,18 +970,19 @@ class Object:
         return False
 
     def motion(self, delta_x, delta_y, matrix, level_rules, status=None) -> bool:
-        """Осуществляет движение объектаd
-        :param delta_x: Сдвиг объекта по оси x
+        """Makes the object move
+
+        :param delta_x: Object shift in the x-axis
         :type delta_x: int
-        :param delta_y: Сдвиг объекта по оси y
+        :param delta_y: Object shift in the y-axis
         :type delta_y: int
-        :param matrix: Матрица, на которой расположен объект
+        :param matrix: Matrix on which the object is located
         :type matrix: List[List[List[Object]]]
-        :param level_rules: Правила уровня в момент движения
+        :param level_rules: Level rules at the moment of movement
         :type level_rules: List[TextRule]
-        :param status: статус объекта, defaults to None
+        :param status: object status, defaults to None
         :type status: str, optional
-        :return: Сдвинется ли объект
+        :return: whether the object will be moved
         :rtype: bool
         """
         if self.check_locked(delta_x, delta_y) and not self.is_sleep and len(matrix[self.y][self.x]) > 0:
@@ -1074,7 +1046,7 @@ class Object:
 
             for rule in level_rules:
                 if ((f'{self.name} is pull' in rule.text_rule and status == 'pull' and not self.is_text) or
-                    (f'text is pull' in rule.text_rule and (self.name in TEXT_ONLY or self.is_text)))\
+                    ('text is pull' in rule.text_rule and (self.name in TEXT_ONLY or self.is_text))) \
                         and rule.check_fix(self, matrix, level_rules):
                     matrix[self.y][self.x].pop(self.get_index(matrix))
                     self.pull_objects(delta_x, delta_y, matrix, level_rules)
@@ -1082,8 +1054,7 @@ class Object:
 
             return True
         elif DEBUG:
-            print(
-                "NOTE: Object can not move. Calling from classes/objects.py->Object.motion()")
+            print("NOTE: Object can not move. Calling from classes/objects.py->Object.motion()")
         return False
 
     def check_word(self, level_rules):
@@ -1093,11 +1064,11 @@ class Object:
         return False
 
     def check_events(self, events: List[pygame.event.Event], number):
-        """Метод обработки событий
+        """Event handling method
 
-        :param events: События, полученные при выхове
+        :param events: Events received during the call
         :type events: List[pygame.event.Event]
-        :param number: Номер правила YOU объекта (/YOU2)
+        :param number: YOU(/YOU2) object rule number
         :type number: int
         """
         self.turning_side = get_pressed_direction(number == 2)
@@ -1109,45 +1080,18 @@ class Object:
                                                           or (self.name in NOUNS and self.is_text)))
 
     @property
-    def is_operator(self) -> bool:
-        """Является ли объект оператором
-
-        :return: Является ли объект оператором
-        :rtype: bool
-        """
-        return self.name in OPERATORS
-
-    @property
-    def is_property(self) -> bool:
-        """Является ли объект свойством
-
-        :return: Является ли объект свойством
-        :rtype: bool
-        """
-        return self.name in PROPERTIES
-
-    @property
     def is_noun(self) -> bool:
-        """Является ли объект существительным
+        """Is the object a noun
 
-        :return: Является ли объект существительным
+        :return: Whether the object is a noun
         :rtype: bool
         """
         return (self.name in NOUNS and self.name not in OPERATORS and self.is_text) or self.name in 'text'
 
-    @property
-    def special_text(self) -> bool:
-        """Является ли объект текстом, но тут проперти особенный
-
-        :return: Является ли объект текстом
-        :rtype: bool
-        """
-        return self.is_text
-
     def __copy__(self):
-        """Метод копирования объекта
+        """Method of object copying
 
-        :return: Копия объекта
+        :return: A copy of the object
         :rtype: Object
         """
         copied_object = Object(

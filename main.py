@@ -1,5 +1,7 @@
 import argparse
 
+import pygame
+
 import settings
 from classes.game_context import GameContext
 from elements.global_classes import sound_manager
@@ -23,6 +25,9 @@ def main():
         settings.FREEMAP = True
         print("Map opened")
 
+    pygame.init()
+    pygame.font.init()
+    pygame.mixer.init()
     sound_manager.start_download()
     GameContext(ProgressBarMenu).run()
 
